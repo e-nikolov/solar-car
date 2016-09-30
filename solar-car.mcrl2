@@ -7,21 +7,52 @@
 
 %------------------------- Action declarations -------------------------------------%
 
+% Input actions
+
+act pressOn, pressOff;
+pressThrottle : Nat;
+act pressBrake, releaseBrake;
+
+act activateCruise, deactivateCruise;
+act emergencySignal;
+
+% Battery actions
+
+act getBatteryLevel : Nat;
+act getBatteryTemp : Nat;
+act conBatteryToMotor : Nat;
+
+% Motor actions
+
+act getSpeed : Nat;
+act conMotorToBattery : Nat;
+act setMotorRequirePower : Nat;
+
+% Solar Panel actions
+act getSolarPower : Nat;
+act conSolarPanelToMotor : Nat;
+act conSolarPanelToBattery : Nat;
+
+% Mechanical brakes
+
+act activateBrakes, deactivateBrakes;
+
+% External environment/external hazard
+
+act enterSafeMode, exitSafeMode;
+
+% Monitoring system
+
+act sendBatteryLevel : Nat;
+act sendBatteryTemp : Nat;
+act sendSolarPower : Nat;
+act sendSpeed : Nat;
 
 %------------------------- Process declarations -------------------------------------%
 
 %------------------------ Main Processes --------------%
 
-%----------------- User ----------------------- %
-% Modelling the actions of an external user.
-
-
-% ---------------- Normal Mode ---------- %
-% Modelling the behavior of the Normal Mode of the operation of the system.
-
-
-% ---------------- Emergency Mode ------------- %
-
+proc Test = sum n : Nat . (n < 10) -> pressOn . pressThrottle(n) . Test;
 
 
 % ---------------- Auxiliary Processes -------------- %
@@ -29,3 +60,10 @@
 
 %------------------------- Initialization -------------------------------------%
 
+init
+  allow(
+    { pressOn, pressOff, pressThrottle },
+    comm(
+      {  },
+      Test
+  ));
