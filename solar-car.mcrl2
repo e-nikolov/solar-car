@@ -1,0 +1,31 @@
+%------------------------- Sort declarations -------------------------------------%
+
+
+
+%------------------------- Map declarations -------------------------------------%
+
+
+%------------------------- Action declarations -------------------------------------%
+
+
+%------------------------- Process declarations -------------------------------------%
+
+%------------------------ Main Processes --------------%
+
+%----------------- User ----------------------- %
+% Modelling the actions of an external user.
+
+
+% ---------------- Normal Mode ---------- %
+% Modelling the behavior of the Normal Mode of the operation of the system.
+
+
+% ---------------- Emergency Mode ------------- %
+
+
+
+% ---------------- Auxiliary Processes -------------- %
+
+
+%------------------------- Initialization -------------------------------------%
+
