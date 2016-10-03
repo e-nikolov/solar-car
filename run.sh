@@ -1,4 +1,4 @@
-mcrl22lps "solar-car.mcrl2" > "solar-car.lps"
+mcrl22lps "solar-car.mcrl2" "solar-car.lps"
 
 if [ $? -eq 0 ]; then
 	lps2lts "solar-car.lps" "solar-car.lts"
