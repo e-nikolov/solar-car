@@ -1,6 +1,7 @@
 %------------------------- Sort declarations -------------------------------------%
 
 
+sort StoppingAction = struct OffPressed ? isOffPressed | Green ? isGreen | Yellow ? isYellow;
 
 %------------------------- Map declarations -------------------------------------%
 
@@ -62,31 +63,36 @@ act continue;
 %------------------------ Main Processes --------------%
 
 proc Main(on : Boolean) = 
-	sendDataS
+	sendStreamDataStart . receiveStreamDataEnd . Main(true)
 	. on
 		-> (
-			pressOff . conMotorToBattery(0) . conSolarPanelToMotor(0) . conBatteryToMotor(0) . Main(False)
+			PowerOff . Main(False)
+			+ ActivateCruise . Main(true)
 			+ sum throttle : Nat . throttle <= MAX
-			-> (
-				pressThrottle(throttle) . setMotorRequirePower(throttle)
-				. 
-				% regenerate energy
-				(throttle == 0)
-					-> sum bl : Nat . bl <= MAX
-						-> sum bt : Nat . bt <= MAX
-							-> getBatteryLevel(bl) . getBatteryTemp(bl) . bl == 10 || bt == 10
-								-> conMotorToBattery(0) . Main(true)
-					<> sum solar : Nat . (sp <= MAX)
-						-> getSolarPower(sp) . conSolarPanelToMotor(min(sp, throttle))
-						. sum  : Nat . bl <= MAX
-							-> bl == 0
-								-> conBatteryToMotor(0) . Main(true)
-								<> conBatteryToMotor(max(0, throttle - sp)) . conSolarPanelToBattery(max(0, sp - throttle)) . Main(true)
+			->  PressThrottle(throttle)
+			 	. 	(
+				 		ActivateCruise(throttle) . Main(true)
+				 		+ Main(true)
+			 		)
 
-				);
+			+ PressBrake . Main(true)
 		<> pressOn . Main(true);
 
-proc SendData = sendDataR
+proc CruiseControl(on : Boolean, desiredSpeed : Nat, throttle : Nat) = 
+	on	-> 	(
+				PowerOff . DeactivateCruise
+				+ PressThrottle . DeactivateCruise
+				+ PressBrake . DeactivateCruise
+
+				+ Cruise(desiredSpeed, throttle)
+		   	)
+		<>	(
+				receiveCruiseControlStart(throttle) . sum currentSpeed : Nat . currentSpeed <= MAX
+				-> 	CruiseControl(true, currentSpeed, throttle)
+			);
+
+
+proc SendData = beginSendDataR
 				. sum bl : Nat . bl <= MAX
 					-> sum bt : Nat . bt <= MAX
 						-> sum sp : Nat . sp <= MAX
@@ -95,14 +101,40 @@ proc SendData = sendDataR
 								 . getBatteryTemp(bt) . sendBatteryTemp(bt)
 								 . getSolarPower(sp) . sendSolarPower(sp)
 								 . getSpeed(s) . sendSpeed(s)
-								 . SendData
+								 . endSendDataS . SendData
 
 
+proc PowerOff = pressOff . conMotorToBattery(0) . conSolarPanelToMotor(0) . conBatteryToMotor(0);
 
+proc PressThrottle = 
+			(
+				pressThrottle(throttle) . setMotorRequirePower(throttle)
+				. 
+				% regenerate energy
+				(throttle == 0)
+					-> sum bl : Nat . bl <= MAX
+						-> sum bt : Nat . bt <= MAX
+							-> getBatteryLevel(bl) . getBatteryTemp(bl) . bl == 10 || bt == 10
+								-> conMotorToBattery(0)
+					<> sum solar : Nat . (sp <= MAX)
+						-> getSolarPower(sp) . conSolarPanelToMotor(min(sp, throttle))
+						. sum  : Nat . bl <= MAX
+							-> bl == 0
+								-> conBatteryToMotor(0)
+								<> conBatteryToMotor(max(0, throttle - sp)) . conSolarPanelToBattery(max(0, sp - throttle))
+			);
 
+proc DeactivateCruise = deactivateCruise . sendCruiseControlEnd . CruiseControl(false, 0);
 
+proc ActivateCruise(throttle : Nat) = activateCruise . sendCruiseControlStart . receiveCruiseControlEnd;
 
+proc PressBrake = 
 
+proc Cruise(desiredSpeed : Nat, throttle : Nat) =
+									sum currentSpeed : Nat . (currentSpeed <= MAX)
+										-> (currentSpeed < desiredSpeed)
+											-> CruiseControl(true, desiredSpeed, throttle + 1)
+											<> CruiseControl(true, desiredSpeed, throttle - 1)
 
 proc Test = sum n : Nat . (n < 10) -> pressOn . pressThrottle(n) . Test;
 
