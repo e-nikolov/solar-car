@@ -1,10 +1,10 @@
-mcrl22lps "solar-car.mcrl2" "solar-car.lps"
+mcrl22lps "solar-car.mcrl2" "solar-car.lps" -lstack
 
 if [ $? -eq 0 ]; then
 	lps2lts "solar-car.lps" "solar-car.lts"
 
 	if [ $? -eq 0 ]; then
-		ltsgraph "solar-car.lts"
+		ltsview "solar-car.lts"
 	else
 		echo lps2lts failed
 	fi

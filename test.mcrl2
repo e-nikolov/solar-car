@@ -68,7 +68,9 @@ act sendStreamDataEnd, receiveStreamDataEnd, commStreamDataEnd;
 act sendCruiseControlStart, receiveCruiseControlStart, commCruiseControlStart : Nat;
 act sendCruiseControlEnd, receiveCruiseControlEnd, commCruiseControlEnd;
 
-act continue, test;
+act continue;
+
+act test : Bool;
 
 %------------------------- Process declarations -------------------------------------%
 
@@ -76,20 +78,16 @@ act continue, test;
 
 proc Main(on : Bool) = 
 	(on)
-		-> sendStreamDataStart . receiveStreamDataEnd . (
-			PowerOff . Main(false)
-			+ sum throttle : Nat . (throttle <= MAX)
-			->  (
-					PressThrottle(throttle)
-				 	. 	(
-					 		ActivateCruise(throttle) . Main(true)
-					 		+ Main(true)
-				 		)
-				)
+		-> %sendStreamDataStart . receiveStreamDataEnd .
+		 	(
+				PowerOff . Main(false)
+				+ sum throttle : Nat . (throttle <= MAX)
+				->  (
+						PressThrottle(throttle) . Main(true)
+					)
 
-			+ PressBrake . Main(true)
 			)
-		<> pressOn . Main(true);
+		<> pressOn . Main(!on);
 
 proc CruiseControl(on : Bool, desiredSpeed : Nat, throttle : Nat) = 
 	on	-> 	(
@@ -129,8 +127,11 @@ proc PressThrottle(throttle : Nat) =
 				. 
 				% regenerate energy
 				(throttle == 0)
-					-> sum bl, bt : Nat . (bl <= MAX && bt <= MAX)
-							-> getBatteryLevel(bl) . getBatteryTemp(bl) . (bl == 10 || bt == 10)
+					-> sum bl : Nat . (bl <= MAX)
+						->  getBatteryLevel(bl)
+							. sum bt : Nat . (bt <= MAX)
+							->  getBatteryTemp(bl)
+							 	. (bl == 10 || bt == 10)
 								-> conMotorToBattery(0)
 					<> sum sp : Nat . (sp <= MAX)
 						-> (
