@@ -76,7 +76,8 @@ act continue, test;
 
 proc Main(on : Bool) = 
 	(on)
-		-> sendStreamDataStart . receiveStreamDataEnd . (
+		-> sendStreamDataStart . receiveStreamDataEnd
+		 . (
 			PowerOff . Main(false)
 			+ sum throttle : Nat . (throttle <= MAX)
 			->  (
