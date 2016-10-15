@@ -8,10 +8,10 @@ sort BatteryTempStatus  = struct Overheating ? isOverheating | Normal ? isNormal
 %------------------------- Map declarations -------------------------------------%
 
 map MAX : Int;
-eqn MAX = 10;
+eqn MAX = 5;
 
 map SPEED_THRESHOLD : Int;
-eqn SPEED_THRESHOLD = 3;
+eqn SPEED_THRESHOLD = 2;
 
 
 %------------------------- Action declarations -------------------------------------%
@@ -103,7 +103,7 @@ proc MainController(on : Bool, cruise : Bool, throttle : Int, desiredSpeed : Int
 							. 
 							(
 								MainController(true, false, newThrottle, speed)
-								+ (cruise == true) -> activateCruise(speed) . MainController(true, true, newThrottle, speed)
+								+ (cruise == false) -> activateCruise(speed) . MainController(true, true, newThrottle, speed)
 							)
 
 						)
