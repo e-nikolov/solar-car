@@ -83,44 +83,44 @@ act newCycle : Bool # Bool # Int # Int;
 
 proc MainController(on : Bool, cruise : Bool, throttle : Int, desiredSpeed : Int) = 
 	(on)
-		-> 
- 		(
- 			newCycle(on, cruise, throttle, desiredSpeed)
- 			. sendStreamDataStart 
+	-> 	(
+			newCycle(on, cruise, throttle, desiredSpeed)
+			. sendStreamDataStart 
 			. sum speed : Int, batteryLevel : BatteryLevelStatus, batteryTemp : BatteryTempStatus, solarPower : Int
 			. receiveStreamDataEnd(speed, batteryLevel, batteryTemp, solarPower)
-			. 	(
-					(cruise == true)
-					-> 	sendCruiseStepStart(throttle, desiredSpeed, speed, batteryLevel, batteryTemp, solarPower)
-						. sum newThrottle : Int . receiveCruiseStepEnd(newThrottle)
-						. MainController(true, true, newThrottle, desiredSpeed)
+			.
+			(
+				(cruise == true)
+				-> 	sendCruiseStepStart(throttle, desiredSpeed, speed, batteryLevel, batteryTemp, solarPower)
+					. sum newThrottle : Int . receiveCruiseStepEnd(newThrottle)
+					. MainController(true, true, newThrottle, desiredSpeed)
 
-					+ sum newThrottle : Int . (newThrottle >= 0 && newThrottle <= MAX)
-					->  (
-							pressThrottle(newThrottle) . deactivateCruise
-							. sendManagePowerStart(newThrottle, speed, batteryLevel, batteryTemp, solarPower)
-							. receiveManagePowerEnd
-							. 
-							(
-								MainController(true, false, newThrottle, speed)
-								+ (cruise == false) -> activateCruise(speed) . MainController(true, true, newThrottle, speed)
-							)
-
+				+ sum newThrottle : Int . (newThrottle >= 0 && newThrottle <= MAX)
+				->  (
+						pressThrottle(newThrottle) . deactivateCruise
+						. sendManagePowerStart(newThrottle, speed, batteryLevel, batteryTemp, solarPower)
+						. receiveManagePowerEnd
+						. 
+						(
+							MainController(true, false, newThrottle, speed)
+							+ (cruise == false) -> activateCruise(speed) . MainController(true, true, newThrottle, speed)
 						)
-					
-					+ PowerOff . MainController(false, false, 0, 0)
-					+ PressBrake(speed, batteryLevel, batteryTemp) . MainController(true, false, 0, 0)
-				)
-			)
 
-		<> pressOn . MainController(true, false, 0, 0);
+					)
+				
+			)
+		)
+
+	<> pressOn . MainController(true, false, 0, 0);
 
 
 proc PowerController =
 	sum throttle : Int, speed : Int, batteryLevel : BatteryLevelStatus, batteryTemp : BatteryTempStatus, solarPower : Int 
 	. receiveManagePowerStart(throttle, speed, batteryLevel, batteryTemp, solarPower)
 	. setMotorRequirePower(throttle)
-	. 	((throttle == 0)
+	. 	
+	(
+		(throttle == 0)
 		-> 	(
 				(batteryLevel == Full || batteryTemp == Overheating)
 				-> 	conMotorToBattery(0)
@@ -150,13 +150,16 @@ proc CruiseStepController =
 	sum throttle : Int, desiredSpeed : Int, currentSpeed : Int, batteryLevel : BatteryLevelStatus, batteryTemp : BatteryTempStatus, solarPower : Int
 	. receiveCruiseStepStart(throttle, desiredSpeed, currentSpeed, batteryLevel, batteryTemp, solarPower)
 	. 
-	((desiredSpeed - currentSpeed > SPEED_THRESHOLD && throttle < MAX)
-	-> 	sendManagePowerStart(throttle + 1, currentSpeed, batteryLevel, batteryTemp, solarPower) . receiveManagePowerEnd . sendCruiseStepEnd(throttle + 1)
+	(
+		(desiredSpeed - currentSpeed > SPEED_THRESHOLD && throttle < MAX)
+		-> 	sendManagePowerStart(throttle + 1, currentSpeed, batteryLevel, batteryTemp, solarPower) . receiveManagePowerEnd . sendCruiseStepEnd(throttle + 1)
 
-	<> (currentSpeed - desiredSpeed < SPEED_THRESHOLD && throttle > 0)
-	 	-> sendManagePowerStart(throttle - 1, currentSpeed, batteryLevel, batteryTemp, solarPower) . receiveManagePowerEnd . sendCruiseStepEnd(throttle - 1)
-	 	<> sendManagePowerStart(throttle, currentSpeed, batteryLevel, batteryTemp, solarPower) . receiveManagePowerEnd . sendCruiseStepEnd(throttle)
-	) . CruiseStepController;
+		<> 	(currentSpeed - desiredSpeed < SPEED_THRESHOLD && throttle > 0)
+		 	-> 	sendManagePowerStart(throttle - 1, currentSpeed, batteryLevel, batteryTemp, solarPower) 
+		 		. receiveManagePowerEnd . sendCruiseStepEnd(throttle - 1)
+		 	<> 	sendManagePowerStart(throttle, currentSpeed, batteryLevel, batteryTemp, solarPower) 
+		 		. receiveManagePowerEnd . sendCruiseStepEnd(throttle)
+		) . CruiseStepController;
 
 
 proc DataStreamController = 
