@@ -1,0 +1,4 @@
+[true*.pressOff] mu X. [!conMotorToBattery(0)] X	
+	&& [true*.pressOff] mu X. [!conBatteryToMotor(0)] X
+	&& [true*.pressOff] mu X. [!conSolarPanelToMotor(0)] X
+	&& [true*.pressOff] mu X. [!conSolarPanelToBattery(0)] X

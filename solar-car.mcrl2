@@ -108,6 +108,8 @@ proc MainController(on : Bool, cruise : Bool, throttle : Int, desiredSpeed : Int
 
 					)
 				
+				+ PowerOff . MainController(false, false, 0, 0)
+				+ PressBrake(speed, batteryLevel, batteryTemp) . MainController(true, false, 0, 0)
 			)
 		)
 
