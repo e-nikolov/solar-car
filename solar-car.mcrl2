@@ -125,27 +125,25 @@ proc PowerController =
 		(throttle == 0)
 		-> 	( 
 				(batteryLevel == Full || batteryTemp == Overheating)
-				-> 	conMotorToBattery(0)
-				<> 	conMotorToBattery(speed)
+				-> 	conBatteryToMotor(0) . conMotorToBattery(0)
+				<> 	conBatteryToMotor(0) . conMotorToBattery(speed)
 			)
 		<> 	(
-				conSolarPanelToMotor(min(solarPower, throttle))
-				. 	
-				(
+				(solarPower > throttle)
+				->	conBatteryToMotor(0) . conSolarPanelToMotor(throttle)
+					.
+					(batteryLevel == Full || batteryTemp == Overheating)
+					->	conSolarPanelToBattery(0)
+					<>	conSolarPanelToBattery(solarPower - throttle)
+				<>	conSolarPanelToBattery(0) . conMotorToBattery(0)
+					.
 					(batteryLevel == Empty)
 					->	conBatteryToMotor(0)
-					<>	conBatteryToMotor(max(0, throttle - solarPower))
-						.
-						(
-							(batteryLevel == Full || batteryTemp == Overheating)
-							->	conSolarPanelToBattery(0)
-							<>	conSolarPanelToBattery(max(0, solarPower - throttle))
-						)
-				)
+					<>	conBatteryToMotor(throttle - solarPower)
 			)
-		)
-		. sendManagePowerEnd
-		. PowerController;
+	)
+	. sendManagePowerEnd
+	. PowerController;
 
 
 proc CruiseStepController =
