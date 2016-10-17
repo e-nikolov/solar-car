@@ -29,7 +29,7 @@
 *.app
 
 *.lps
-*.lts
+# *.lts
 
 *.pbes
 bak.mcrl2
