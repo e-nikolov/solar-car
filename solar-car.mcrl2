@@ -186,9 +186,11 @@ proc PowerOff = pressOff . conMotorToBattery(0) . conSolarPanelToMotor(0) . conS
 proc PressBrake(speed : Int, batteryLevel : BatteryLevelStatus, batteryTemp : BatteryTempStatus) = 
 				pressBrake . conBatteryToMotor(0) . conSolarPanelToMotor(0) . activateBrakes
 				. 
-				(batteryLevel == Full || batteryTemp == Overheating)
-				->	conMotorToBattery(0)
-				<> 	conMotorToBattery(speed)
+				(
+					(batteryLevel == Full || batteryTemp == Overheating)
+					->	conMotorToBattery(0)
+					<> 	conMotorToBattery(speed)
+				) . PressBrake(speed, batteryLevel, batteryTemp)
 				+ releaseBrake . conMotorToBattery(0) . deactivateBrakes;
 
 

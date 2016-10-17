@@ -27,7 +27,7 @@ if [ $? -eq 0 ]; then
 	echo Running lps2lts..
 	echo -----------------
 
-	lps2lts "$NAME.lps" "$NAME.lts" --verbose
+	lps2lts "$NAME.lps" "$NAME.lts" --verbose --cached -D -F --prune
 
 	if [ $? -eq 0 ]; then
 
