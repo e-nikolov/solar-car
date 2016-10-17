@@ -23,13 +23,13 @@
 
 %%%% 6 %%%%
 	 && (forall m: Nat. val(m>0&&m<=5)=> ([!(conBatteryToMotor(0))*. conSolarPanelToBattery(m)]false))	%true
-	 % && (forall n: Nat. val(n>0&&n<=5)=> ([!(conBatteryToMotor(0))*. conMotorToBattery(n)]false))	%true
-	 % && (forall m: Nat. val(m>0&&m<=5)=> ([!(conSolarPanelToBattery(0))*. conBatteryToMotor(m)]false)) %false
-	 % && (forall m: Nat. val(m>0&&m<=5)=> ([!(conMotorToBattery(0))*. conBatteryToMotor(m)]false)) %false
-	 % && (forall m: Nat. val(m>0&&m<=5)=> ([!(conMotorToBattery(0))*. conSolarPanelToMotor(m)]false)) %false	
-     % && (forall n: Nat. val(n>0&&n<=5)=> ([!(conMotorToBattery(0))*. conBatteryToMotor(n)]false)) %false	
-     % && (forall m: Nat. val(m>0&&m<=5)=> ([!(conSolarPanelToMotor(0))*. conMotorToBattery(m)]false))	%false
-	 % && (forall m: Nat. val(m>0&&m<=5)=> ([!(conBatteryToMotor(0))*. conMotorToBattery(m)]false))	%false
+	 && (forall n: Nat. val(n>0&&n<=5)=> ([!(conBatteryToMotor(0))*. conMotorToBattery(n)]false))	%true
+	 && (forall m: Nat. val(m>0&&m<=5)=> ([!(conSolarPanelToBattery(0))*. conBatteryToMotor(m)]false)) %false
+	 && (forall m: Nat. val(m>0&&m<=5)=> ([!(conMotorToBattery(0))*. conBatteryToMotor(m)]false)) %false
+	 && (forall m: Nat. val(m>0&&m<=5)=> ([!(conMotorToBattery(0))*. conSolarPanelToMotor(m)]false)) %false	
+     && (forall n: Nat. val(n>0&&n<=5)=> ([!(conMotorToBattery(0))*. conBatteryToMotor(n)]false)) %false	
+     && (forall m: Nat. val(m>0&&m<=5)=> ([!(conSolarPanelToMotor(0))*. conMotorToBattery(m)]false))	%false
+	 && (forall m: Nat. val(m>0&&m<=5)=> ([!(conBatteryToMotor(0))*. conMotorToBattery(m)]false))	%false
 
 %%%% 7 %%%%
 	% && [true*. getBatteryLevel(Empty)] mu X. [!(conBatteryToMotor(0))] X	%false

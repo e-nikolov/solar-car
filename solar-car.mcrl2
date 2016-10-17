@@ -135,7 +135,7 @@ proc PowerController =
 					(batteryLevel == Full || batteryTemp == Overheating)
 					->	conSolarPanelToBattery(0)
 					<>	conSolarPanelToBattery(solarPower - throttle)
-				<>	conSolarPanelToBattery(0) . conMotorToBattery(0)
+				<>	conSolarPanelToBattery(0) . conMotorToBattery(0) . conSolarPanelToMotor(solarPower)
 					.
 					(batteryLevel == Empty)
 					->	conBatteryToMotor(0)
