@@ -30,3 +30,6 @@
 
 *.lps
 *.lts
+
+*.pbes
+bak.mcrl2

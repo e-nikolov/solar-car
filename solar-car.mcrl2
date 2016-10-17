@@ -123,7 +123,7 @@ proc PowerController =
 	. 	
 	(
 		(throttle == 0)
-		-> 	(
+		-> 	( 
 				(batteryLevel == Full || batteryTemp == Overheating)
 				-> 	conMotorToBattery(0)
 				<> 	conMotorToBattery(speed)

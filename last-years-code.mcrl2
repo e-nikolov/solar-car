@@ -1,6 +1,6 @@
 %         1| 1     |
 %         2|       |2
-%       1  | A     |   1 2
+%       1  | A     |   1 2is
 %-----------       -----------
 %                   B    2
 %     2   D
@@ -228,7 +228,7 @@ init hide({continue, indicateActiveLanes},
 	  				sendActiveLanes | receiveActiveLanes -> indicateActiveLanes,
 					sendEmergencyStart | receiveEmergencyStartNM | receiveEmergencyStartEM -> emergencyStart,
 					sendEmergencyEnd   | receiveEmergencyEndNM   | receiveEmergencyEndEM   -> emergencyEnd,
-	  			sendSensor | receiveSensor -> getSensor
+	  				sendSensor | receiveSensor -> getSensor
 					},
 % 		Start the NormalMode by activating lanes A and C.
 			User || NormalModeInit([A, C]) || EmergencyMode
