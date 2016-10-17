@@ -3,7 +3,7 @@
 	&& [true*.pressOff] mu X. [!conBatteryToMotor(0)] X			
 	&& [true*.pressOff] mu X. [!conSolarPanelToMotor(0)] X		
 	&& [true*.pressOff] mu X. [!conSolarPanelToBattery(0)] X	
-	&& (forall  m: Nat . val(m>0&&m<=5)=>   ([true*.pressOff. (!pressOn)*. (conMotorToBattery(m)+conBatteryToMotor(m)+conSolarPanelToMotor(m)+conSolarPanelToBattery(m)+conSolarPanelToBattery(m))]false))	
+	&& (forall  m: Nat . val(m>0&&m<=5)=>   ([true*.pressOff. (!pressOn)*. (conMotorToBattery(m)+conBatteryToMotor(m)+conSolarPanelToMotor(m)+conSolarPanelToBattery(m))]false))	
 
 %%%% 2 %%%%		%true	
 	&& [true*.enterSafeMode] mu X. [!pressOff] X			  
