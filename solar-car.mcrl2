@@ -156,7 +156,7 @@ proc CruiseStepController =
 		(desiredSpeed - currentSpeed > SPEED_THRESHOLD && throttle < MAX)
 		-> 	sendManagePowerStart(throttle + 1, currentSpeed, batteryLevel, batteryTemp, solarPower) . receiveManagePowerEnd . sendCruiseStepEnd(throttle + 1)
 
-		<> 	(currentSpeed - desiredSpeed < SPEED_THRESHOLD && throttle > 0)
+		<> 	(currentSpeed - desiredSpeed > SPEED_THRESHOLD && throttle > 0)
 		 	-> 	sendManagePowerStart(throttle - 1, currentSpeed, batteryLevel, batteryTemp, solarPower) 
 		 		. receiveManagePowerEnd . sendCruiseStepEnd(throttle - 1)
 		 	<> 	sendManagePowerStart(throttle, currentSpeed, batteryLevel, batteryTemp, solarPower) 
