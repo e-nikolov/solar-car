@@ -1,20 +1,17 @@
-%%%% 1 %%%%
-	[true*.pressOff] mu X. [!conMotorToBattery(0)] X			%true
-	&& [true*.pressOff] mu X. [!conBatteryToMotor(0)] X			%true
-	&& [true*.pressOff] mu X. [!conSolarPanelToMotor(0)] X		%true
-	&& [true*.pressOff] mu X. [!conSolarPanelToBattery(0)] X	%true
+%%%% 1 %%%%		%true	
+	[true*.pressOff] mu X. [!conMotorToBattery(0)] X			
+	&& [true*.pressOff] mu X. [!conBatteryToMotor(0)] X			
+	&& [true*.pressOff] mu X. [!conSolarPanelToMotor(0)] X		
+	&& [true*.pressOff] mu X. [!conSolarPanelToBattery(0)] X	
+	&& (forall  m: Nat . val(m>0&&m<=5)=>   ([true*.pressOff. (!pressOn)*. (conMotorToBattery(m)+conBatteryToMotor(m)+conSolarPanelToMotor(m)+conSolarPanelToBattery(m)+conSolarPanelToBattery(m))]false))	
 
-%	&& forall  m: Nat . val(m>0&&m<=5)=>   ([true*.(conMotorToBattery(m)+conBatteryToMotor(m)+conSolarPanelToMotor(m)+conSolarPanelToBattery(m)+conSolarPanelToBattery(m)).(!pressOn)*. pressOff]false)		%false
+%%%% 2 %%%%		%true	
+	&& [true*.enterSafeMode] mu X. [!pressOff] X			  
 
-
-%%%% 2 %%%%
-	&& [true*.enterSafeMode] mu X. [!pressOff] X			  %true
-
-%%%% 3 %%%%
-	&& [true*.pressBrake] mu X. [!conBatteryToMotor(0)] X		%true
-	&& [true*.pressBrake] mu X. [!conSolarPanelToMotor(0)] X	%true
-%	&& forall m: Nat . val(m>0&&m<=5)=> ([true*.(conBatteryToMotor(m)+conSolarPanelToMotor(m)). (!pressBrake)*. releaseBrake]false)	%false
-	&& forall m: Nat . val(m > 0 && m <= 5) => ([true* . pressBrake . (!releaseBrake)* . (conBatteryToMotor(m) + conSolarPanelToMotor(m))] false)	%false
+%%%% 3 %%%%		%true	
+	&& [true*.pressBrake] mu X. [!conBatteryToMotor(0)] X		
+	&& [true*.pressBrake] mu X. [!conSolarPanelToMotor(0)] X	
+	&& (forall m: Nat . val(m > 0 && m <= 5) => ([true* . pressBrake . (!releaseBrake)* . (conBatteryToMotor(m) + conSolarPanelToMotor(m))] false))	
 
 %%%% 4 %%%%
 
@@ -22,4 +19,23 @@
 
 %%%% 5 %%%%
 	&& [true*. (getBatteryTemp(Overheating)||getBatteryLevel(Full))] mu X. [!(conSolarPanelToBattery(0)) && !(conMotorToBattery(0))] X	%true
-%	&& forall m: Nat . val(m>0&&m<=5)=> ([true*. (conMotorToBattery(m)+conSolarPanelToBattery(m)). !(getBatteryLevel(Medium)||getBatteryLevel(Empty)&&getBatteryTemp(Normal))*. (getBatteryLevel(Full)||getBatteryTemp(Overheating))]false)	% false
+	% &&  (forall m: Nat . val(m>0&&m<=5)=> ([true*. (getBatteryLevel(Full)||getBatteryTemp(Overheating)). !(getBatteryLevel(Medium)||getBatteryLevel(Empty)&&getBatteryTemp(Normal))*. (conMotorToBattery(m)+conSolarPanelToBattery(m)) ]false))	%false
+
+
+%%%% 6 %%%%
+	&& (forall m, n: Nat. val(m>0&&m<=5&&n>0&&n<=5)=> ([!(conBatteryToMotor(0))*. (conSolarPanelToBattery(m) || conMotorToBattery(n))]false))	%true
+	% && (forall m: Nat. val(m>0&&m<=5)=> ([!(conSolarPanelToBattery(0) && conMotorToBattery(0))*. conBatteryToMotor(m)]false)) %false
+	% && (forall m, n: Nat. val(m>0&&m<=5&&n>0&&n<=5)=> ([!(conMotorToBattery(0))*. (conSolarPanelToMotor(m) || conBatteryToMotor(n))]false)) %false	
+	% && (forall m : Nat. val(m>0&&m<=5)=> ([!(conSolarPanelToMotor(0) && conBatteryToMotor(0))*. conMotorToBattery(m)]false))	%false
+
+%%%% 7 %%%%
+	% && [true*. getBatteryLevel(Empty)] mu X. [!(conBatteryToMotor(0))] X	%false
+	% && (forall m : Nat. val(m>0&&m<=5)=> ([true*. conBatteryToMotor(m). !(getBatteryLevel(Empty))*. (getBatteryLevel(Medium) || getBatteryLevel(Full))]false))	%false
+	% && [true*. getSolarPower(0)] mu X. [!conSolarPanelToMotor(0)] X	%false
+	% && (forall m, n: Nat. val(m>0&&m<=5&&n>0&&n<=5)=> ([true*. conSolarPanelToMotor(m). !(getSolarPower(0))*. getSolarPower(n)]false)) %false
+
+%%%% 8 %%%%
+
+
+%%%% 9 %%%%
+
