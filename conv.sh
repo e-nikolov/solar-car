@@ -1,0 +1,29 @@
+source ./kv-bash
+
+if [ ! -z $1 ]; then
+	kvset NAME $1
+fi
+
+#if [ ! -z $2 ]; then
+	# kvset FORMULA $2
+#fi
+
+echo $(kvlist)
+
+NAME=$(kvget NAME)
+FORMULA=$(kvget FORMULA)
+
+# echo $NAME
+# echo $TOOL
+
+# mcrl22lps "$NAME.mcrl2" "$NAME.lps" -lstack
+
+if [ $? -eq 0 ]; then
+	echo -------------------
+	echo Running ltscovert..
+	echo -------------------
+
+	ltsconvert --equivalence=dpbranching-bisim-sig "$NAME.lts" "$NAME.lts" --verbose
+else
+    echo mcrl22lps failed
+fi
