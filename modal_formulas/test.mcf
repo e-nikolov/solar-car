@@ -1,14 +1,12 @@
-[true*]<true*>true
-
 %%%% 1 %%%%		%true
-	% [true*.pressOff] mu X. [!conMotorToBattery(0)] X			
+	[true*]<true*>true
+
+%%%% 2 %%%%		%true
+	% && 	[true*.pressOff] mu X. [!conMotorToBattery(0)] X			
 	% && [true*.pressOff] mu X. [!conBatteryToMotor(0)] X			
 	% && [true*.pressOff] mu X. [!conSolarPanelToMotor(0)] X		
 	% && [true*.pressOff] mu X. [!conSolarPanelToBattery(0)] X	
-	% && (forall  m: Nat . val(m>0&&m<=5)=>   ([true*.pressOff. (!pressOn)*. (conMotorToBattery(m)+conBatteryToMotor(m)+conSolarPanelToMotor(m)+conSolarPanelToBattery(m)]false))		
-
-%%%% 2 %%%%		%true
-	% && [true*.enterSafeMode] mu X. [!pressOff] X			  
+	% && (forall  m: Nat . val(m>0&&m<=5)=>   ([true*.pressOff. (!pressOn)*. (conMotorToBattery(m)+conBatteryToMotor(m)+conSolarPanelToMotor(m)+conSolarPanelToBattery(m)]false))				  
 
 %%%% 3 %%%%		%true
 	% && [true*.pressBrake] mu X. [!conBatteryToMotor(0)] X		
@@ -39,13 +37,19 @@
 	% && [true*. getSolarPower(0)] mu X. [!conSolarPanelToMotor(0)] X	%false
 	% && (forall m, n: Nat. val(m>0&&m<=5&&n>0&&n<=5)=> ([true*. conSolarPanelToMotor(m). !(getSolarPower(0))*. getSolarPower(n)]false)) %false
 
-%%%% 8 %%%%
+%%%% 8 %%%%		
+	% && (forall a, b: Nat. val(a>=0&&a<=5&&b>=0&&b<=5&&a>b)=> ([true*. (getSolarPower(a)||pressThrottle(b))] mu X. [!conSolarPanelToMotor(b)]X))	% false
+	% && (forall a, b: Nat. val(a>=0&&a<=5&&b>=0&&b<=5&&a>b)=> ([true*. (getBatteryLevel(Empty)||getBatteryLevel(Medium)&&getBatteryTemp(Normal)). !(getBatteryTemp(Overheating)&&getBatteryLevel(Full))*.  (getSolarPower(a)||pressThrottle(b))] mu X. [!conSolarPanelToBattery(a-b)]X))	%false
 
-
-%%%% 9 %%%%
+%%%% 9 %%%%		
+	% && (forall a, b: Nat. val(a>=0&&a<=5&&b>=0&&b<=5&&a<=b)=> ([true*. (getSolarPower(a)||pressThrottle(b))] mu X. [!conSolarPanelToMotor(a)]X))	%false
+	% && (forall a, b: Nat. val(a>=0&&a<=5&&b>=0&&b<=5&&a<=b)=> ([true*. (getBatteryLevel(Empty)||getBatteryLevel(Medium)&&getBatteryTemp(Normal)). !(getBatteryTemp(Overheating)&&getBatteryLevel(Full))*.  (getSolarPower(a)||pressThrottle(b))] mu X. [!conBatteryToMotor(b-a)]X))	%false
 
 
 %%%% 10 %%%%
+	% && (forall m, n: Nat. val(m>=0&&m<=5&&n>=0&&n<=5&&n>=m)=> ([true*. activateCruise(n). !(deactivateCruise). getSpeed(m)] mu X. [!setMotorRequirePower(n-m)]X))
+	% && (forall m, n: Nat. val(m>=0&&m<=5&&n>=0&&n<=5&&n<m)=> ([true*. activateCruise(n). !(deactivateCruise). getSpeed(m)] mu X. [!pressBrake]X))
+
 
 %%%% 11 %%%%	%true
 	% && (forall n: Nat. val(n>=0&&n<=5)=> ([true*. activateCruise(n). !(deactivateCruise)*. pressThrottle] mu X. [!dectivateCruise]X))	
