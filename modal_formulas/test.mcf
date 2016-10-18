@@ -46,16 +46,15 @@
 	% && (forall a, b: Nat. val(a>=0&&a<=5&&b>=0&&b<=5&&a<=b)=> ([true*. (getBatteryLevel(Empty)||getBatteryLevel(Medium)&&getBatteryTemp(Normal)). !(getBatteryTemp(Overheating)&&getBatteryLevel(Full))*.  (getSolarPower(a)||pressThrottle(b))] mu X. [!conBatteryToMotor(b-a)]X))	%false
 
 
-%%%% 10 %%%%
-	% && (forall m, n: Nat. val(m>=0&&m<=5&&n>=0&&n<=5&&n>=m)=> ([true*. activateCruise(n). !(deactivateCruise). getSpeed(m)] mu X. [!setMotorRequirePower(n-m)]X))
-	% && (forall m, n: Nat. val(m>=0&&m<=5&&n>=0&&n<=5&&n<m)=> ([true*. activateCruise(n). !(deactivateCruise). getSpeed(m)] mu X. [!pressBrake]X))
+%%%% 10 %%%%	%syntasx error
+	% && (forall m, n, p: Nat. val(m>=0&&m<=5&&n>=0&&n<=5&&p>=0&&p<=5&&n>p)=> ([true*. setMotorRequirePower(m). !(setMotorRequirePower)*. activateCruise(n). !(setMotorRequirePower&&activateCruise)*. getSpeed(p)] mu X. [!setMotorRequirePower(m+1)]X))	%syntax error
 
 
-%%%% 11 %%%%	%true
-	% && (forall n: Nat. val(n>=0&&n<=5)=> ([true*. activateCruise(n). !(deactivateCruise)*. pressThrottle] mu X. [!dectivateCruise]X))	
-	% && (forall n: Nat. val(n>=0&&n<=5)=> ([true*. activateCruise(n). !(deactivateCruise)*. pressBrake] mu X. [!dectivateCruise]X))
-	% && (forall n: Nat. val(n>=0&&n<=5)=> ([true*. activateCruise(n). !(deactivateCruise)*. pressOff] mu X. [!dectivateCruise]X))
-	% && (forall n: Nat. val(n>=0&&n<=5)=> ([true*. activateCruise(n). !(deactivateCruise)*. enterSafeMode] mu X. [!dectivateCruise]X))
+% %%%% 11 %%%%	%true
+% 	&& (forall n, m: Nat. val(n>=0&&n<=5&&m>=0&&m<=5)=> ([true*. activateCruise(n). !(deactivateCruise)*. pressThrottle(m)] mu X. [!deactivateCruise]X))	
+% 	&& (forall n: Nat. val(n>=0&&n<=5)=> ([true*. activateCruise(n). !(deactivateCruise)*. pressBrake] mu X. [!deactivateCruise]X))
+% 	&& (forall n: Nat. val(n>=0&&n<=5)=> ([true*. activateCruise(n). !(deactivateCruise)*. pressOff] mu X. [!deactivateCruise]X))
+% 	&& (forall n: Nat. val(n>=0&&n<=5)=> ([true*. activateCruise(n). !(deactivateCruise)*. enterSafeMode] mu X. [!deactivateCruise]X))
 
 %%%% 12 %%%%	%true
 	% && (forall n: BatteryLevelStatus. ([true*. getBatteryLevel(n)] mu X. [!sendBatteryLevel(n)] X))	
