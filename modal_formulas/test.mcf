@@ -18,7 +18,7 @@
 
 %%%% 4 %%%%		%false
 	% && [true*. (getBatteryTemp(Overheating)||getBatteryLevel(Full))] mu X. ([!(conSolarPanelToBattery(0)) && !(conMotorToBattery(0))] X&& <true>true)	%true
-	&& (forall m: Nat. val(m>0&&m<=5)=> ([true*. (getBatteryTemp(Overheating)||getBatteryLevel(Full)). !(getBatteryLevel(Empty)||getBatteryLevel(Medium)&&getBatteryTemp(Normal))*. (conSolarPanelToBattery(m)+conMotorToBattery(m))]false))	%false
+	% && (forall m: Nat. val(m>0&&m<=5)=> ([true*. (getBatteryTemp(Overheating)||getBatteryLevel(Full)). !(getBatteryLevel(Empty)||getBatteryLevel(Medium)&&getBatteryTemp(Normal))*. (conSolarPanelToBattery(m)+conMotorToBattery(m))]false))	%false
 
 %%%% 5 %%%%		%true
 	% && (forall m: Nat. val(m>0&&m<=5)=> ([!(conBatteryToMotor(0))*. conSolarPanelToBattery(m)]false))	
@@ -31,10 +31,10 @@
 	% && (forall m: Nat. val(m>0&&m<=5)=> ([!(conBatteryToMotor(0))*. conMotorToBattery(m)]false))	
 
 %%%% 6 %%%%		%false
-	% && [true*. getBatteryLevel(Empty)] mu X. [!(conBatteryToMotor(0))] X	%false
-	% && (forall m : Nat. val(m>0&&m<=5)=> ([true*. conBatteryToMotor(m). !(getBatteryLevel(Empty))*. (getBatteryLevel(Medium) || getBatteryLevel(Full))]false))	%false
-	% && [true*. getSolarPower(0)] mu X. [!conSolarPanelToMotor(0)] X	%false
-	% && (forall m, n: Nat. val(m>0&&m<=5&&n>0&&n<=5)=> ([true*. conSolarPanelToMotor(m). !(getSolarPower(0))*. getSolarPower(n)]false)) %false
+	&& [true*. getBatteryLevel(Empty)] mu X. ([!(conBatteryToMotor(0))] X && <true>true)	%false
+	% && (forall m: Nat. val(m>0&&m<=5)=> [true*. getBatteryLevel(Empty). !(getBatteryLevel(Medium)||getBatteryLevel(Full))*. conBatteryToMotor(m)]false)	%true
+	&& [true*. getSolarPower(0)] mu X. ([!conSolarPanelToMotor(0)] X && <true>true)	%false
+	% && (forall m, n: Nat. val(m>0&&m<=5&&n>0&&n<=5)=> [true*. getSolarPower(0). !(getSolarPower(n))*. conSolarPanelToMotor(m)*]false)	%false
 
 %%%% 7 %%%%		%false
 	% && (forall a, b: Nat. val(a>=0&&a<=5&&b>=0&&b<=5&&a>b)=> ([true*. (getSolarPower(a)||pressThrottle(b))] mu X. [!conSolarPanelToMotor(b)]X))	% false
@@ -50,13 +50,13 @@
 
 
 %%%% 10 %%%%	%true
-	% && (forall n, m: Nat. val(n>=0&&n<=5&&m>=0&&m<=5)=> ([true*. activateCruise(n). !(deactivateCruise)*. pressThrottle(m)] mu X. [!deactivateCruise]X))	
-	% && (forall n: Nat. val(n>=0&&n<=5)=> ([true*. activateCruise(n). !(deactivateCruise)*. pressBrake] mu X. [!deactivateCruise]X))
-	% && (forall n: Nat. val(n>=0&&n<=5)=> ([true*. activateCruise(n). !(deactivateCruise)*. pressOff] mu X. [!deactivateCruise]X))
-	% && (forall n: Nat. val(n>=0&&n<=5)=> ([true*. activateCruise(n). !(deactivateCruise)*. enterSafeMode] mu X. [!deactivateCruise]X))
+	% && (forall n, m: Nat. val(n>=0&&n<=5&&m>=0&&m<=5)=> ([true*. activateCruise(n). !(deactivateCruise)*. pressThrottle(m)] mu X. ([!deactivateCruise]X&& <true>true)))	
+	% && (forall n: Nat. val(n>=0&&n<=5)=> ([true*. activateCruise(n). !(deactivateCruise)*. pressBrake] mu X. ([!deactivateCruise]X&& <true>true)))
+	% && (forall n: Nat. val(n>=0&&n<=5)=> ([true*. activateCruise(n). !(deactivateCruise)*. pressOff] mu X. ([!deactivateCruise]X&& <true>true)))
+	% && (forall n: Nat. val(n>=0&&n<=5)=> ([true*. activateCruise(n). !(deactivateCruise)*. enterSafeMode] mu X. ([!deactivateCruise]X&& <true>true)))
 
 %%%% 11 %%%%	%true
-	% && (forall n: BatteryLevelStatus. ([true*. getBatteryLevel(n)] mu X. [!sendBatteryLevel(n)] X))	
-	% && (forall n: BatteryTempStatus. ([true*. getBatteryTemp(n)] mu X. [!sendBatteryTemp(n)] X))
-	% && (forall n: Nat. val(n>=0&&n<=5)=> ([true*. getSolarPower(n)] mu X. [!sendSolarPower(n)] X))
-	% && (forall n: Nat. val(n>=0&&n<=5)=> ([true*. getSpeed(n)] mu X. [!sendSpeed(n)] X))
+	% && (forall n: BatteryLevelStatus. ([true*. getBatteryLevel(n)] mu X. ([!sendBatteryLevel(n)] X&& <true>true)))	
+	% && (forall n: BatteryTempStatus. ([true*. getBatteryTemp(n)] mu X. ([!sendBatteryTemp(n)] X&& <true>true)))
+	% && (forall n: Nat. val(n>=0&&n<=5)=> ([true*. getSolarPower(n)] mu X. ([!sendSolarPower(n)] X&& <true>true)))
+	% && (forall n: Nat. val(n>=0&&n<=5)=> ([true*. getSpeed(n)] mu X. ([!sendSpeed(n)] X&& <true>true)))
