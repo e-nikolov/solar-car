@@ -19,61 +19,62 @@ eqn SPEED_THRESHOLD = 3;
 % Input actions
 
 act pressOn, pressOff;
-pressThrottle : Int;
-act pressBrake, releaseBrake;
+	pressThrottle : Int;
+	releaseThrottle;
+	pressBrake, releaseBrake;
 
-act activateCruise : Int;
-act deactivateCruise;
-act emergencySignal;
+	activateCruise : Int;
+	deactivateCruise;
+	emergencySignal;
 
 % Battery actions
 
-act getBatteryLevel : BatteryLevelStatus;
-act getBatteryTemp : BatteryTempStatus;
-act conBatteryToMotor : Int;
+	getBatteryLevel : BatteryLevelStatus;
+	getBatteryTemp : BatteryTempStatus;
+	conBatteryToMotor : Int;
 
 % Motor actions
 
-act getSpeed : Int;
-act conMotorToBattery : Int;
-act setMotorRequirePower : Int;
+	getSpeed : Int;
+	conMotorToBattery : Int;
+	setMotorRequirePower : Int;
 
 % Solar Panel actions
-act getSolarPower : Int;
-act conSolarPanelToMotor : Int;
-act conSolarPanelToBattery : Int;
+	getSolarPower : Int;
+	conSolarPanelToMotor : Int;
+	conSolarPanelToBattery : Int;
 
 % Mechanical brakes
 
-act activateBrakes, deactivateBrakes;
+	activateBrakes, deactivateBrakes;
 
 % External environment/external hazard
 
-act enterSafeMode, exitSafeMode;
+	enterSafeMode, exitSafeMode;
 
 % Monitoring system
 
-act sendBatteryLevel : BatteryLevelStatus;
-act sendBatteryTemp : BatteryTempStatus;
-act sendSolarPower : Int;
-act sendSpeed : Int;
+	sendBatteryLevel : BatteryLevelStatus;
+	sendBatteryTemp : BatteryTempStatus;
+	sendSolarPower : Int;
+	sendSpeed : Int;
 
 % Internal actions
 
-act sendStreamDataStart, receiveStreamDataStart, startStreamData;
-act sendStreamDataEnd, receiveStreamDataEnd, endStreamData : Int # BatteryLevelStatus # BatteryTempStatus # Int;
+	sendStreamDataStart, receiveStreamDataStart, startStreamData;
+	sendStreamDataEnd, receiveStreamDataEnd, endStreamData : Int # BatteryLevelStatus # BatteryTempStatus # Int;
 
-act sendCruiseStepStart, receiveCruiseStepStart, startCruiseStep : Int # Int # Int # BatteryLevelStatus # BatteryTempStatus # Int;
-act sendCruiseStepEnd, receiveCruiseStepEnd, endCruiseStep : Int;
+	sendCruiseStepStart, receiveCruiseStepStart, startCruiseStep : Int # Int # Int # BatteryLevelStatus # BatteryTempStatus # Int;
+	sendCruiseStepEnd, receiveCruiseStepEnd, endCruiseStep : Int;
 
-act sendManagePowerStart, receiveManagePowerStart, startManagePower : Int # Int # BatteryLevelStatus # BatteryTempStatus # Int;
-act sendManagePowerEnd, receiveManagePowerEnd, endManagePower;
+	sendManagePowerStart, receiveManagePowerStart, startManagePower : Int # Int # BatteryLevelStatus # BatteryTempStatus # Int;
+	sendManagePowerEnd, receiveManagePowerEnd, endManagePower;
 
-act continue;
+	continue;
 
-act test : Bool;
-act testN : Int;
-act newCycle : Bool # Bool # Int # Int;
+	test : Bool;
+	testN : Int;
+	newCycle : Bool # Bool # Int # Int;
 
 
 %------------------------- Process declarations -------------------------------------%
@@ -101,21 +102,24 @@ proc MainController(on : Bool, cruise : Bool, throttle : Int, desiredSpeed : Int
 					. sum newThrottle : Int . receiveCruiseStepEnd(newThrottle)
 					. MainController(true, true, newThrottle, desiredSpeed)
 
-				+ sum newThrottle : Int . (newThrottle >= 0 && newThrottle <= MAX)
+				+ (throttle > 0)
+				-> 	releaseThrottle . deactivateCruise
+					. sendManagePowerStart(0, speed, batteryLevel, batteryTemp, solarPower)
+						. receiveManagePowerEnd
+						. MainController(true, false, 0, speed)
+
+				+ sum newThrottle : Int . (newThrottle >= 1 && newThrottle <= MAX)
 				->  (
 						pressThrottle(newThrottle) . deactivateCruise
 						. sendManagePowerStart(newThrottle, speed, batteryLevel, batteryTemp, solarPower)
 						. receiveManagePowerEnd
-						. 
-						(
-							MainController(true, false, newThrottle, speed)
-							+ (cruise == false) -> activateCruise(speed) . MainController(true, true, newThrottle, speed)
-						)
+						. MainController(true, false, newThrottle, speed)
 
 					)
-				
+
+				+ (cruise == false && throttle == 0 && speed != 0) -> activateCruise(speed) . MainController(true, true, 0, speed)
 				+ PowerOff . MainController(false, false, 0, 0)
-				+ PressBrake(speed, batteryLevel, batteryTemp) . MainController(true, false, 0, 0)
+				+ PressBrake(speed, batteryLevel, batteryTemp, false) . MainController(true, false, 0, 0)
 			)
 		)
 
@@ -187,15 +191,16 @@ proc DataStreamController =
 
 proc PowerOff = pressOff . conMotorToBattery(0) . conSolarPanelToMotor(0) . conSolarPanelToBattery(0) . conBatteryToMotor(0) . deactivateCruise;
 
-proc PressBrake(speed : Int, batteryLevel : BatteryLevelStatus, batteryTemp : BatteryTempStatus) = 
-				pressBrake . conBatteryToMotor(0) . conSolarPanelToMotor(0) . activateBrakes
-				. 
-				(
-					(batteryLevel == Full || batteryTemp == Overheating)
-					->	conMotorToBattery(0)
-					<> 	conMotorToBattery(speed)
-				) . PressBrake(speed, batteryLevel, batteryTemp)
-				+ releaseBrake . conMotorToBattery(0) . deactivateBrakes;
+proc PressBrake(speed : Int, batteryLevel : BatteryLevelStatus, batteryTemp : BatteryTempStatus, braking : Bool) = 
+				(!braking)
+				->	pressBrake . deactivateCruise . conBatteryToMotor(0) . conSolarPanelToMotor(0) . activateBrakes
+					. 
+					(
+						(batteryLevel == Full || batteryTemp == Overheating)
+						->	conMotorToBattery(0)
+						<> 	conMotorToBattery(speed)
+					) . PressBrake(speed, batteryLevel, batteryTemp, true)
+				<>	releaseBrake . deactivateCruise . conMotorToBattery(0) . deactivateBrakes;
 
 
 %------------------------- Initialization -------------------------------------%
@@ -208,7 +213,7 @@ init hide({continue},
     	getBatteryLevel, getBatteryTemp, conBatteryToMotor, getSpeed, conMotorToBattery, setMotorRequirePower, getSolarPower,
     	conSolarPanelToMotor, conSolarPanelToBattery, activateBrakes, deactivateBrakes, enterSafeMode, exitSafeMode,
     	sendBatteryLevel, sendBatteryTemp, sendSolarPower, sendSpeed, startStreamData, endStreamData, startCruiseStep,
-    	endCruiseStep, startManagePower, endManagePower, continue, test, testN	
+    	endCruiseStep, startManagePower, endManagePower, releaseThrottle, continue, test, testN	
 
     },
     comm(
