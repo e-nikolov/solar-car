@@ -23,7 +23,7 @@ if [ $? -eq 0 ]; then
 	echo Running lts2pbes..
 	echo ------------------
 
-	lts2pbes --formula="modal_formulas/$FORMULA.mcf" "$NAME.lts"  "$NAME.pbes" --verbose
+	lts2pbes --formula="modal_formulas/$FORMULA.mcf" "$NAME.lts"  "$NAME.pbes" --verbose --mcrl2="$NAME.mcrl2"
 
 	if [ $? -eq 0 ]; then
 		echo -------------------
