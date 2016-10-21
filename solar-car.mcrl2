@@ -88,6 +88,12 @@ proc MainController(on : Bool, cruise : Bool, throttle : Int, desiredSpeed : Int
 			. sendStreamDataStart 
 			. sum speed : Int, batteryLevel : BatteryLevelStatus, batteryTemp : BatteryTempStatus, solarPower : Int
 			. receiveStreamDataEnd(speed, batteryLevel, batteryTemp, solarPower)
+			. 
+			(
+				(batteryLevel == Full || batteryTemp == Overheating) 
+				->	conMotorToBattery(0) . conSolarPanelToBattery(0)
+				<>	continue
+			)
 			.
 			(
 				(cruise == true)

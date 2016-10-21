@@ -35,7 +35,10 @@ if [ $? -eq 0 ]; then
 		echo --------------------
 		echo "Running ltsconvert.."
 		echo --------------------
-		ltsconvert --equivalence=dpbranching-bisim-sig "$NAME-orig.lts" "$NAME.lts" --verbose
+		rm "$NAME.lts"
+		cp "$NAME-orig.lts" "$NAME.lts"
+		ltsconvert --equivalence=dpbranching-bisim-sig "$NAME.lts" "$NAME.lts" --verbose
+		# ltsconvert --equivalence=tau-star "$NAME.lts" "$NAME.lts" --verbose
 
 		if [ $? -eq 0 ]; then
 
