@@ -1,0 +1,6 @@
+true
+%%%% 6 %%%%		%false
+	&& ([true*. getBatteryLevel(Empty)] mu X. ([!(conBatteryToMotor(0))] X && <true>true))	%false
+	&& (forall m: Nat. val(m>0&&m<=5)=> [true*. getBatteryLevel(Empty). !(getBatteryLevel(Medium)||getBatteryLevel(Full))*. conBatteryToMotor(m)]false)	%true
+	&& ([true*. getSolarPower(0)] mu X. ([!conSolarPanelToMotor(0)] X && <true>true))	%false
+	&& (forall m, n: Nat. val(m>0&&m<=5&&n>0&&n<=5)=> [true*. getSolarPower(0). !(getSolarPower(n))*. conSolarPanelToMotor(m)*]false)	%false

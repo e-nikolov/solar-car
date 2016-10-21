@@ -1,0 +1,3 @@
+true
+%%%% 9 %%%%	%syntasx error
+	% && (forall m, n, p: Nat. val(m>=0&&m<=5&&n>=0&&n<=5&&p>=0&&p<=5&&n>p)=> ([true*. setMotorRequirePower(m). !(setMotorRequirePower)*. activateCruise(n). !(setMotorRequirePower&&activateCruise)*. getSpeed(p)] mu X. [!setMotorRequirePower(m+1)]X))	%syntax error

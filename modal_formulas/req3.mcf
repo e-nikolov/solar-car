@@ -1,0 +1,4 @@
+true
+%%%% 3 %%%%		%false
+
+	&& ([true* . ((getBatteryLevel(Empty) || getBatteryLevel(Medium)) && getBatteryTemp(Normal)) . !pressBrake . (getBatteryLevel(Full)&&getBatteryTemp(Overheating))* ] mu X . ([!(forall p: Nat. val(p>=0&&p<=5)=> (conMotorToBattery(p)))] X	&& <true>true))	% false
