@@ -15,6 +15,7 @@ TOOL=$(kvget TOOL)
 
 # echo $NAME
 # echo $TOOL
+
 echo -------------------
 echo Running mcrl22lps..
 echo -------------------
@@ -27,14 +28,14 @@ if [ $? -eq 0 ]; then
 	echo Running lps2lts..
 	echo -----------------
 
-	lps2lts "$NAME.lps" "$NAME.lts" --verbose --cached -D -F --prune
+	lps2lts "$NAME.lps" "$NAME-orig.lts" --verbose --cached -D -F --prune
 
 	if [ $? -eq 0 ]; then
 
 		echo --------------------
 		echo "Running ltsconvert.."
 		echo --------------------
-		ltsconvert --equivalence=dpbranching-bisim-sig "$NAME.lts" "$NAME.lts" --verbose
+		ltsconvert --equivalence=dpbranching-bisim-sig "$NAME-orig.lts" "$NAME.lts" --verbose
 
 		if [ $? -eq 0 ]; then
 
