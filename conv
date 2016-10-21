@@ -1,6 +1,6 @@
 source ./kv-bash
 
-if [ ! -z $1 ]; then
+if [ ! -z $1 ] && [ ! $1 == "_" ]; then
 	kvset NAME $1
 fi
 

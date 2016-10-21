@@ -1,11 +1,11 @@
 source ./kv-bash
 
-if [ ! -z $1 ]; then
-	kvset NAME $1
+if [ ! -z $1 ] && [ ! $1 == "_" ]; then
+	kvset FORMULA $1
 fi
 
-if [ ! -z $2 ]; then
-	kvset FORMULA $2
+if [ ! -z $2 ] && [ ! $2 == "_" ]; then
+	kvset NAME $2
 fi
 
 echo $(kvlist)
