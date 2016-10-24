@@ -9,3 +9,7 @@ getSpeed(0) cannot be followed by activateCruise(x), without a getSpeed(n) in be
 
 pressThrottle(n) cannot be followed by activateCruise without a releaseThrottle in between.
 
+cruise step can only happen between activatecruise and deactivate cruise
+
+
+
