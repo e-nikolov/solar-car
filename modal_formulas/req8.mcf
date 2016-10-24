@@ -1,4 +1,4 @@
 true
 %%%% 8 %%%%		%false
-	&& (forall a, b: Nat. val(a>=0&&a<=5&&b>=0&&b<=5&&a<=b)=> ([true*. (getSolarPower(a)||pressThrottle(b))] mu X. [!conSolarPanelToMotor(a)]X))	%false
-	&& (forall a, b: Nat. val(a>=0&&a<=5&&b>=0&&b<=5&&a<=b)=> ([true*. (getBatteryLevel(Empty)||getBatteryLevel(Medium)&&getBatteryTemp(Normal)). !(getBatteryTemp(Overheating)&&getBatteryLevel(Full))*.  (getSolarPower(a)||pressThrottle(b))] mu X. [!conBatteryToMotor(b-a)]X))	%false
+&& forall t : Int . val(t >= 1 && t <= MAX) => ([true* . pressThrottle(t)] mu X . ([(!setMotorRequirePower(t))] X && <true> true))
+
