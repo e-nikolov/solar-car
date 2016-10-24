@@ -2,5 +2,5 @@ true
 %%%% 10 %%%%	%true
 	&& (forall n, m: Nat. val(n>=0&&n<=5&&m>=0&&m<=5)=> ([true*. activateCruise(n). !(deactivateCruise)*. pressThrottle(m)] mu X. ([!deactivateCruise]X&& <true>true)))	
 	&& (forall n: Nat. val(n>=0&&n<=5)=> ([true*. activateCruise(n). !(deactivateCruise)*. pressBrake] mu X. ([!deactivateCruise]X&& <true>true)))
-	&& (forall n: Nat. val(n>=0&&n<=5)=> ([true*. activateCruise(n). !(deactivateCruise)*. pressOff] mu X. ([!deactivateCruise]X&& <true>true)))
+	&& (forall n: Nat. val(n>=0&&n<=5)=> ([true*. activateCruise(n). !(deactivateCruise)*. switchOff] mu X. ([!deactivateCruise]X&& <true>true)))
 	&& (forall n: Nat. val(n>=0&&n<=5)=> ([true*. activateCruise(n). !(deactivateCruise)*. enterSafeMode] mu X. ([!deactivateCruise]X&& <true>true)))

@@ -1,0 +1,11 @@
+Is it necessary to express that for all other actions in req3 and req7, the state remains unchanged?
+
+
+req 9 
+
+An activateCruise(s) cannot happen without a preceding getSpeed(s)
+
+getSpeed(0) cannot be followed by activateCruise(x), without a getSpeed(n) in between
+
+pressThrottle(n) cannot be followed by activateCruise without a releaseThrottle in between.
+

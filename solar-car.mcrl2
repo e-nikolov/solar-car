@@ -18,7 +18,7 @@ eqn SPEED_THRESHOLD = 3;
 
 % Input actions
 
-act pressOn, pressOff;
+act switchOn, switchOff;
     pressThrottle : Int;
     releaseThrottle;
     pressBrake, releaseBrake;
@@ -135,7 +135,7 @@ proc MainController(on : Bool, cruise : Bool, throttle : Int, desiredSpeed : Int
             )
         )
 
-    <> pressOn . MainController(true, false, 0, 0);
+    <> switchOn . MainController(true, false, 0, 0);
 
 
 proc PowerController =
@@ -201,7 +201,7 @@ proc DataStreamController =
 
 % ---------------- Auxiliary Processes -------------- %
 
-proc PowerOff = pressOff . conMotorToBattery(0) . conSolarPanelToMotor(0) . conSolarPanelToBattery(0) . conBatteryToMotor(0) . deactivateCruise;
+proc PowerOff = switchOff . conMotorToBattery(0) . conSolarPanelToMotor(0) . conSolarPanelToBattery(0) . conBatteryToMotor(0) . deactivateCruise;
 
 proc PressBrake(speed : Int, batteryLevel : BatteryLevelStatus, batteryTemp : BatteryTempStatus, solarPower : Int, braking : Bool) = 
                 (!braking)
@@ -217,7 +217,7 @@ init hide({continue},
   allow(
     {
         newCycle,
-        pressOn, pressOff, pressThrottle, pressBrake, releaseBrake, activateCruise, deactivateCruise, emergencySignal,
+        switchOn, switchOff, pressThrottle, pressBrake, releaseBrake, activateCruise, deactivateCruise, emergencySignal,
         getBatteryLevel, getBatteryTemp, conBatteryToMotor, getSpeed, conMotorToBattery, setMotorRequirePower, getSolarPower,
         conSolarPanelToMotor, conSolarPanelToBattery, activateBrakes, deactivateBrakes, enterSafeMode, exitSafeMode,
         sendBatteryLevel, sendBatteryTemp, sendSolarPower, sendSpeed, startStreamData, endStreamData, startCruiseStep,

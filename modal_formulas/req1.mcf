@@ -1,9 +1,9 @@
 	true
 %%%% 1 %%%%		%true
 %%%% a %%%%		%true
-	&& ([true*.pressOff] mu X. ([!conMotorToBattery(0)] X && <true>true))
-	&& ([true*.pressOff] mu X. ([!conBatteryToMotor(0)] X && <true>true))
-	&& ([true*.pressOff] mu X. ([!conSolarPanelToMotor(0)] X && <true>true))	
-	&& ([true*.pressOff] mu X. ([!conSolarPanelToBattery(0)] X && <true>true))	
+	&& ([true*.switchOff] mu X. ([!conMotorToBattery(0)] X && <true>true))
+	&& ([true*.switchOff] mu X. ([!conBatteryToMotor(0)] X && <true>true))
+	&& ([true*.switchOff] mu X. ([!conSolarPanelToMotor(0)] X && <true>true))	
+	&& ([true*.switchOff] mu X. ([!conSolarPanelToBattery(0)] X && <true>true))	
 %%%% b %%%%		%true
-	&& (forall  m: Nat . val(m > 0 && m <= 5) => ([true* . pressOff . (!pressOn)* . (conMotorToBattery(m) || conBatteryToMotor(m) || conSolarPanelToMotor(m) || conSolarPanelToBattery(m))]false))		  
+	&& (forall  m: Nat . val(m > 0 && m <= 5) => ([true* . switchOff . (!switchOn)* . (conMotorToBattery(m) || conBatteryToMotor(m) || conSolarPanelToMotor(m) || conSolarPanelToBattery(m))]false))		  

@@ -1,10 +1,11 @@
     true
 %%%% 3 %%%%     %false
 &&  (
-        nu X(b1 : Bool = false, b2 : Bool = false, speed : Int = 0) .
-            ([forall l : BatteryLevelStatus, t : BatteryTempStatus, speed' : Int . !getBatteryLevel(l) && !getBatteryTemp(t) && !pressBrake && !getSpeed(speed')]  X(b1, b2, speed)) && 
-            (forall l : BatteryLevelStatus . [getBatteryLevel(l)]       X(l != Full, b2, speed)) &&
-            (forall t : BatteryTempStatus  . [getBatteryTemp(t)]        X(b1, t != Overheating, speed)) &&
-            (forall speed' : Int                . [getSpeed(speed')]              X(b1, b2, speed'))   &&
-            (val(b1 && b2) => [pressBrake] mu Y . ([!conMotorToBattery(speed)] Y && <true>true))
+        nu X(level : BatteryLevelStatus = Medium, temp : BatteryTempStatus = Normal, speed : Int = 0) .
+        	% is this necessary?
+            ([forall level' : BatteryLevelStatus, temp' : BatteryTempStatus, speed' : Int . !getBatteryLevel(level') && !getBatteryTemp(temp') && !pressBrake && !getSpeed(speed')]  X(level, temp, speed)) && 
+            (forall level' : BatteryLevelStatus . [getBatteryLevel(level')]     X(level', temp, speed)) &&
+            (forall temp' : BatteryTempStatus  	. [getBatteryTemp(temp')]       X(level, temp', speed)) &&
+            (forall speed' : Int                . [getSpeed(speed')]            X(level, temp, speed')) &&
+            [pressBrake] (val(level != Full && temp != Overheating) =>  (mu Y . ([!conMotorToBattery(speed)] Y && <true>true)))
     )
