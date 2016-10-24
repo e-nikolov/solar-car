@@ -1,15 +1,16 @@
 true
-%%%% 7 %%%%		%false
-%	&& (forall a, b: Nat. val(a>=0&&a<=5&&b>=0&&b<=5&&a>b)=> ([true*. (getSolarPower(a)||pressThrottle(b))] mu X. [!conSolarPanelToMotor(b)]X))	% false
-%	&& (forall a, b: Nat. val(a>=0&&a<=5&&b>=0&&b<=5&&a>b)=> ([true*. (getBatteryLevel(Empty)||getBatteryLevel(Medium)&&getBatteryTemp(Normal)). !(getBatteryTemp(Overheating)&&getBatteryLevel(Full))*.  (getSolarPower(a)||pressThrottle(b))] mu X. [!conSolarPanelToBattery(a-b)]X))	%false
-
+%%%% 7 %%%%		%true
 &&  (
         nu X(b1 : Bool = false, b2 : Bool = false, solarPower : Int = 0, speed : Int = 0) .
             ([forall l : BatteryLevelStatus, t : BatteryTempStatus, solarPower' : Int, speed' : Int . !getBatteryLevel(l) && !getBatteryTemp(t) && !pressBrake && !getSolarPower(solarPower') && !getSpeed(speed')]  X(b1, b2, solarPower, speed)) && 
             (forall l : BatteryLevelStatus . [getBatteryLevel(l)]       X(l != Full, b2, solarPower, speed)) &&
             (forall t : BatteryTempStatus  . [getBatteryTemp(t)]        X(b1, t != Overheating, solarPower, speed)) &&
-            (forall solarPower' : Int  . [getSolarPower(solarPower')]   X(b1, t != Overheating, solarPower', speed)) &&
+            (forall solarPower' : Int  . [getSolarPower(solarPower')]   X(b1, b2, solarPower', speed)) &&
             (forall speed' : Int                . [getSpeed(speed')]    X(b1, b2, solarPower, speed'))   &&
-            (val(solarPower > rp) => [setMotorRequirePower(rp)] mu Y . ([!conSolarPowerToMotor(rp)] Y && <true>true))
-            (val(b1 && b2 && solarPower > np) => [setMotorRequirePower(rp)] mu Y . ([!conSolarPowerToBattery(solarPower - rp)] Y && <true>true))
+
+%%%% a %%%%		%true            
+            (forall requiredPower : Int . val(solarPower > requiredPower) => [setMotorRequirePower(requiredPower)] mu Y . ([!conSolarPanelToMotor(requiredPower)] Y && <true>true)) &&
+
+%%%% b %%%%		%true            
+            (forall requiredPower : Int . val(b1 && b2 && solarPower > requiredPower) => [setMotorRequirePower(requiredPower)] mu Y . ([!conSolarPanelToBattery(solarPower - requiredPower)] Y && <true>true))
     )
