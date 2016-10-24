@@ -95,6 +95,18 @@ proc MainController(on : Bool, cruise : Bool, throttle : Int, desiredSpeed : Int
                 ->  conMotorToBattery(0) . conSolarPanelToBattery(0)
                 <>  continue
             )
+            . 
+            (
+                (batteryLevel == Empty) 
+                ->  conBatteryToMotor(0)
+                <>  continue
+            )
+            . 
+            (
+                (solarPower == 0) 
+                ->  conSolarPanelToMotor(0) . conSolarPanelToBattery(0)
+                <>  continue
+            )
             .
             (
                 (cruise == true)
