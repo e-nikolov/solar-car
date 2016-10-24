@@ -1,17 +1,13 @@
 true
 %%%% 5 %%%%		%true
 %%%% a %%%%		%true
-	&& (forall m: Nat . val(m > 0 && m <= MAX) => ([!(conBatteryToMotor(0))* . conSolarPanelToBattery(m)]false))
-	&& (forall n: Nat . val(n > 0 && n <= MAX) => ([!(conBatteryToMotor(0))* . conMotorToBattery(n)]false))
+	&& (forall m: Nat . val(m > 0 && m <= MAX) => (([!(conBatteryToMotor(0))* . conSolarPanelToBattery(m)]false) && ([!(conBatteryToMotor(0))* . conMotorToBattery(m)]false)))
 
 %%%% b %%%%		%true
-	&& (forall m: Nat . val(m > 0 && m <= MAX) => ([!(conSolarPanelToBattery(0))* . conBatteryToMotor(m)]false)) 
-	&& (forall m: Nat . val(m > 0 && m <= MAX) => ([!(conMotorToBattery(0))* . conBatteryToMotor(m)]false))
+	&& (forall m: Nat . val(m > 0 && m <= MAX) => (([!(conSolarPanelToBattery(0))* . conBatteryToMotor(m)]false) && ([!(conMotorToBattery(0))* . conBatteryToMotor(m)]false)))
 
 %%%% c %%%%		%true
-	&& (forall m: Nat . val(m > 0 && m <= MAX) => ([!(conMotorToBattery(0))* . conSolarPanelToMotor(m)]false)) 	
-	&& (forall n: Nat . val(n > 0 && n <= MAX) => ([!(conMotorToBattery(0))* . conBatteryToMotor(n)]false)) 	
+	&& (forall m: Nat . val(m > 0 && m <= MAX) => (([!(conMotorToBattery(0))* . conSolarPanelToMotor(m)]false) && ([!(conMotorToBattery(0))* . conBatteryToMotor(m)]false))) 		
 
 %%%% d %%%%		%true
-	&& (forall m: Nat . val(m > 0 && m <= MAX) => ([!(conSolarPanelToMotor(0))* . conMotorToBattery(m)]false))	
-	&& (forall m: Nat . val(m > 0 && m <= MAX) => ([!(conBatteryToMotor(0))* . conMotorToBattery(m)]false))	
+	&& (forall m: Nat . val(m > 0 && m <= MAX) => (([!(conSolarPanelToMotor(0))* . conMotorToBattery(m)]false) && ([!(conBatteryToMotor(0))* . conMotorToBattery(m)]false)))
