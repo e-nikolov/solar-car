@@ -1,0 +1,28 @@
+true
+%%%% 10 %%%%	%true
+%%%% a %%%%	%true
+    && (forall desiredSpeed : Int . val(desiredSpeed >= 0 && desiredSpeed <= MAX) => ([true* . activateCruise(desiredSpeed)] mu X . ([!cruiseStep(0, desiredSpeed) && !deactivateCruise] X && <true>true)))
+
+%%%% b %%%%	%true
+	&& 	(
+			nu X(speed : Int = 0) .
+				(forall speed' : Int . [getSpeed(speed')] X(speed')) &&
+				(forall throttle : Int, desiredSpeed : Int . [cruiseStep(throttle, desiredSpeed)] 
+
+%%%% i %%%%		%true
+					(val(desiredSpeed - speed > SPEED_THRESHOLD) => 
+						(mu Y . [!setMotorRequirePower(throttle + 1)] Y && <true> true) && 
+						(mu Y . [!cruiseStep(throttle + 1) && !deactivateCruise] Y && <true> true)) &&
+
+%%%% ii %$%		%true
+					(val(speed - desiredSpeed > SPEED_THRESHOLD) =>
+						(mu Y . [!setMotorRequirePower(throttle - 1)] Y && <true> true) && 
+						(mu Y . [!cruiseStep(throttle - 1) && !deactivateCruise] Y && <true> true)) &&
+
+%%%% iii %%		%true
+					(val(ABS(speed - desiredSpeed) <= SPEED_THRESHOLD) =>
+						(mu Y . [!setMotorRequirePower(throttle)] Y && <true> true) && 
+						(mu Y . [!cruiseStep(throttle) && !deactivateCruise] Y && <true> true))
+				)
+
+		)
