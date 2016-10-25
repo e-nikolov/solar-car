@@ -11,5 +11,9 @@ pressThrottle(n) cannot be followed by activateCruise without a releaseThrottle 
 
 cruise step can only happen between activatecruise and deactivate cruise
 
+cruiseStep(ds, p) must be followed by setMotorRequirePower(p/p-1/p+1)
+cruiseStep(ds, p) must be followed by cruiseStep(ds, p/p-1/p+1) or deactivateCruise
+
+activateCruise(ds) must be followed by either cruiseStep(0, ds) or deactivateCruise
 
 

@@ -1,6 +1,14 @@
 true
-%%%% 9 %%%%	%syntasx error
-	% && (forall m, n, p: Nat. val(m>=0&&m<=5&&n>=0&&n<=5&&p>=0&&p<=5&&n>p)=> ([true*. setMotorRequirePower(m). !(setMotorRequirePower)*. activateCruise(n). !(setMotorRequirePower&&activateCruise)*. getSpeed(p)] mu X. [!setMotorRequirePower(m+1)]X))	%syntax error
+%%%% 9 %%%% %true
+    && nu X(speed : Int = 0, throttle : Int = 0) . 
+        ([forall speed' : Int, throttle' : Int . (!getSpeed(speed') && !pressThrottle(throttle') && !releaseThrottle && !switchOn)] X(speed, throttle)) &&
+        (forall speed' : Int . [getSpeed(speed')] X(speed', throttle)) &&
+        (forall throttle' : Int . [pressThrottle(throttle')] X(speed, throttle')) &&
+        ([releaseThrottle || switchOn] X(speed, 0)) &&
+        (forall speed' : Int . [activateCruise(speed')] val(speed > 0 && speed == speed' && throttle == 0))
 
-	[true* . activateCruise] mu X . (!cruiseStep && <true> true) X
+
+
+
+
 

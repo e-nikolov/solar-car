@@ -25,7 +25,6 @@ act switchOn, switchOff;
 
     activateCruise : Int;
     deactivateCruise;
-    emergencySignal;
 
 % Battery actions
 
@@ -47,10 +46,6 @@ act switchOn, switchOff;
 % Mechanical brakes
 
     activateBrakes, deactivateBrakes;
-
-% External environment/external hazard
-
-    enterSafeMode, exitSafeMode;
 
 % Monitoring system
 
@@ -75,6 +70,7 @@ act switchOn, switchOff;
     test : Bool;
     testN : Int;
     newCycle : Bool # Bool # Int # Int;
+    cruiseStep : Int # Int;
 
 
 %------------------------- Process declarations -------------------------------------%
@@ -110,7 +106,7 @@ proc MainController(on : Bool, cruise : Bool, throttle : Int, desiredSpeed : Int
             .
             (
                 (cruise == true)
-                ->  sendCruiseStepStart(throttle, desiredSpeed, speed, batteryLevel, batteryTemp, solarPower)
+                ->  cruiseStep(throttle, desiredSpeed) . sendCruiseStepStart(throttle, desiredSpeed, speed, batteryLevel, batteryTemp, solarPower)
                     . sum newThrottle : Int . receiveCruiseStepEnd(newThrottle)
                     . MainController(true, true, newThrottle, desiredSpeed)
 
@@ -118,20 +114,20 @@ proc MainController(on : Bool, cruise : Bool, throttle : Int, desiredSpeed : Int
                 ->  releaseThrottle . deactivateCruise
                     . sendManagePowerStart(0, speed, batteryLevel, batteryTemp, solarPower)
                         . receiveManagePowerEnd
-                        . MainController(true, false, 0, speed)
+                        . MainController(true, false, 0, 0)
 
                 + sum newThrottle : Int . (newThrottle >= 1 && newThrottle <= MAX)
                 ->  (
                         pressThrottle(newThrottle) . deactivateCruise
                         . sendManagePowerStart(newThrottle, speed, batteryLevel, batteryTemp, solarPower)
                         . receiveManagePowerEnd
-                        . MainController(true, false, newThrottle, speed)
+                        . MainController(true, false, newThrottle, 0)
 
                     )
 
                 + (cruise == false && throttle == 0 && speed != 0) -> activateCruise(speed) . MainController(true, true, 0, speed)
                 + PowerOff . MainController(false, false, 0, 0)
-                + PressBrake(speed, batteryLevel, batteryTemp, solarPower, false) . MainController(true, false, 0, 0)
+                + PressBrake(speed, batteryLevel, batteryTemp, solarPower, false) . MainController(true, false, throttle, 0)
             )
         )
 
@@ -216,10 +212,10 @@ proc PressBrake(speed : Int, batteryLevel : BatteryLevelStatus, batteryTemp : Ba
 init hide({continue},
   allow(
     {
-        newCycle,
-        switchOn, switchOff, pressThrottle, pressBrake, releaseBrake, activateCruise, deactivateCruise, emergencySignal,
+        newCycle, cruiseStep,
+        switchOn, switchOff, pressThrottle, pressBrake, releaseBrake, activateCruise, deactivateCruise,
         getBatteryLevel, getBatteryTemp, conBatteryToMotor, getSpeed, conMotorToBattery, setMotorRequirePower, getSolarPower,
-        conSolarPanelToMotor, conSolarPanelToBattery, activateBrakes, deactivateBrakes, enterSafeMode, exitSafeMode,
+        conSolarPanelToMotor, conSolarPanelToBattery, activateBrakes, deactivateBrakes,
         sendBatteryLevel, sendBatteryTemp, sendSolarPower, sendSpeed, startStreamData, endStreamData, startCruiseStep,
         endCruiseStep, startManagePower, endManagePower, releaseThrottle, continue, test, testN 
 
