@@ -6,3 +6,6 @@ true
 
 % deactivateCruise cannot happen before an activateCruise(desiredSpeed)
 &&  ([forall desiredSpeed : Int . !activateCruise(desiredSpeed)* . deactivateCruise] false)
+
+% 2 deactivateCruise cannot happen without an activateCruise(desiredSpeed) inbetween.
+&& ([forall desiredSpeed : Int . deactivateCruise . !activateCruise(desiredSpeed)* . deactivateCruise] false)
