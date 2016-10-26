@@ -1,30 +1,26 @@
 true
 %%%% 10 %%%%	%true
-%%%% a %%%%	%true
-    && (forall desiredSpeed : Int . val(desiredSpeed >= 0 && desiredSpeed <= MAX) => ([true* . activateCruise(desiredSpeed)] mu X . ([!cruiseStep(0, desiredSpeed) && !deactivateCruise] X && <true>true)))
-
 %%%% b %%%%	%true
 	&& 	(
-			nu X(speed : Int = 0) .
-				([forall speed' : Int . !getSpeed(speed')] X(speed)) &&
-				(forall speed' : Int . [getSpeed(speed')] X(speed')) &&
-				(forall throttle : Int, desiredSpeed : Int . 
-
+			nu X(desiredSpeed : Int = 0, power : Int = 0) .
+				([forall desiredSpeed', power' : Int . !setMotorRequirePower(power') && !activateCruise(desiredSpeed') && !deactivateCruise] X(desiredSpeed, power)) &&
+				(forall desiredSpeed' : Int . [activateCruise(desiredSpeed')] X(desiredSpeed', 0)) &&
+				([deactivateCruise] X(0, power)) &&
+				(forall power' : Int . [setMotorRequirePower(power')] X(desiredSpeed, power')) &&
+				(
+					forall speed : Int . [getSpeed(speed)]
+					(
 %%%% i %%%%		%true
-					(val(throttle >= 0 && throttle < MAX && desiredSpeed - speed > SPEED_THRESHOLD) => 
-						([cruiseStep(throttle, desiredSpeed)]  (mu Y . [!setMotorRequirePower(throttle + 1)] Y && <true> true)) && 
-						([cruiseStep(throttle, desiredSpeed)]  (mu Y . [!cruiseStep(throttle + 1, desiredSpeed) && !deactivateCruise] Y && <true> true))) &&
-
+						(val(desiredSpeed > 0 && power >= 0 && power < MAX && desiredSpeed - speed > SPEED_THRESHOLD)
+							=> (mu Y . ([!setMotorRequirePower(power + 1) && !deactivateCruise] Y && <true> true))) &&
 %%%% ii %$%		%true
-					(val(throttle > 0 && throttle <= MAX && speed - desiredSpeed > SPEED_THRESHOLD) =>
-						([cruiseStep(throttle, desiredSpeed)]  (mu Y . [!setMotorRequirePower(throttle - 1)] Y && <true> true)) && 
-						([cruiseStep(throttle, desiredSpeed)]  (mu Y . [!cruiseStep(throttle - 1, desiredSpeed) && !deactivateCruise] Y && <true> true))) &&
-
+						(val(desiredSpeed > 0 && power > 0 && power <= MAX && speed - desiredSpeed > SPEED_THRESHOLD)
+							=> (mu Y . [!setMotorRequirePower(power - 1) && !deactivateCruise] Y && <true> true)) && 
 %%%% iii %%		%true
-					(val(throttle >= 0 && throttle <= MAX && abs(speed - desiredSpeed) <= SPEED_THRESHOLD) =>
-
-						([cruiseStep(throttle, desiredSpeed)]  (mu Y . [!setMotorRequirePower(throttle)] Y && <true> true)) && 
-						([cruiseStep(throttle, desiredSpeed)]  (mu Y . [!cruiseStep(throttle, desiredSpeed) && !deactivateCruise] Y && <true> true)))
+						(val(desiredSpeed > 0 && power >= 0 && power <= MAX && abs(speed - desiredSpeed) <= SPEED_THRESHOLD)
+							=> (mu Y . [!setMotorRequirePower(power) && !deactivateCruise] Y && <true> true))
+					)
 				)
-
 		)
+
+

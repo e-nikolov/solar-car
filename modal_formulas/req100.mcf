@@ -1,0 +1,8 @@
+true
+
+
+% if activateCruise(desiredSpeed) happens, then deactivateCruise is always eventually possible as long as it hasn't happened yet.
+&& (forall desiredSpeed : Int . val(desiredSpeed >= 1 && desiredSpeed <= MAX) => [true* . activateCruise(desiredSpeed) . !deactivateCruise*] <true* . deactivateCruise> true )
+
+% deactivateCruise cannot happen before an activateCruise(desiredSpeed)
+&&  ([forall desiredSpeed : Int . !activateCruise(desiredSpeed)* . deactivateCruise] false)

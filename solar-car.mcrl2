@@ -111,14 +111,14 @@ proc MainController(on : Bool, cruise : Bool, throttle : Int, desiredSpeed : Int
                     . MainController(true, true, newThrottle, desiredSpeed)
 
                 + (throttle > 0)
-                ->  releaseThrottle . deactivateCruise
+                ->  releaseThrottle . ((cruise) -> deactivateCruise <> continue)
                     . sendManagePowerStart(0, speed, batteryLevel, batteryTemp, solarPower)
                         . receiveManagePowerEnd
                         . MainController(true, false, 0, 0)
 
                 + sum newThrottle : Int . (newThrottle >= 1 && newThrottle <= MAX)
                 ->  (
-                        pressThrottle(newThrottle) . deactivateCruise
+                        pressThrottle(newThrottle) . ((cruise) -> deactivateCruise <> continue)
                         . sendManagePowerStart(newThrottle, speed, batteryLevel, batteryTemp, solarPower)
                         . receiveManagePowerEnd
                         . MainController(true, false, newThrottle, 0)
@@ -126,8 +126,8 @@ proc MainController(on : Bool, cruise : Bool, throttle : Int, desiredSpeed : Int
                     )
 
                 + (cruise == false && throttle == 0 && speed != 0) -> activateCruise(speed) . MainController(true, true, 0, speed)
-                + PowerOff . MainController(false, false, 0, 0)
-                + PressBrake(speed, batteryLevel, batteryTemp, solarPower, false) . MainController(true, false, throttle, 0)
+                + PowerOff . ((cruise) -> deactivateCruise <> continue) . MainController(false, false, 0, 0)
+                + PressBrake(speed, batteryLevel, batteryTemp, solarPower, false) . ((cruise) -> deactivateCruise <> continue) . MainController(true, false, throttle, 0)
             )
         )
 
@@ -197,14 +197,14 @@ proc DataStreamController =
 
 % ---------------- Auxiliary Processes -------------- %
 
-proc PowerOff = switchOff . conMotorToBattery(0) . conSolarPanelToMotor(0) . conSolarPanelToBattery(0) . conBatteryToMotor(0) . deactivateCruise;
+proc PowerOff = switchOff . conMotorToBattery(0) . conSolarPanelToMotor(0) . conSolarPanelToBattery(0) . conBatteryToMotor(0);
 
 proc PressBrake(speed : Int, batteryLevel : BatteryLevelStatus, batteryTemp : BatteryTempStatus, solarPower : Int, braking : Bool) = 
                 (!braking)
-                ->  pressBrake . deactivateCruise
+                ->  pressBrake
                     . sendManagePowerStart(0, speed, batteryLevel, batteryTemp, solarPower) . receiveManagePowerEnd 
                     . activateBrakes . PressBrake(speed, batteryLevel, batteryTemp, solarPower, true)
-                <>  releaseBrake . deactivateCruise . conMotorToBattery(0) . deactivateBrakes;
+                <>  releaseBrake . conMotorToBattery(0) . deactivateBrakes;
 
 
 %------------------------- Initialization -------------------------------------%

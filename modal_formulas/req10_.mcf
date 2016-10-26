@@ -6,23 +6,25 @@ true
 %%%% b %%%%	%true
 	&& 	(
 			nu X(speed : Int = 0) .
+				([forall speed' : Int . !getSpeed(speed')] X(speed)) &&
 				(forall speed' : Int . [getSpeed(speed')] X(speed')) &&
-				(forall throttle : Int, desiredSpeed : Int . [cruiseStep(throttle, desiredSpeed)] 
+				(forall throttle : Int, desiredSpeed : Int . 
 
 %%%% i %%%%		%true
-					(val(desiredSpeed - speed > SPEED_THRESHOLD) => 
-						(mu Y . [!setMotorRequirePower(throttle + 1)] Y && <true> true) && 
-						(mu Y . [!cruiseStep(throttle + 1) && !deactivateCruise] Y && <true> true)) &&
+					(val(throttle >= 0 && throttle < MAX && desiredSpeed - speed > SPEED_THRESHOLD) => 
+						([cruiseStep(throttle, desiredSpeed)]  (mu Y . [!setMotorRequirePower(throttle + 1)] Y && <true> true)) && 
+						([cruiseStep(throttle, desiredSpeed)]  (mu Y . [!cruiseStep(throttle + 1, desiredSpeed) && !deactivateCruise] Y && <true> true))) &&
 
 %%%% ii %$%		%true
-					(val(speed - desiredSpeed > SPEED_THRESHOLD) =>
-						(mu Y . [!setMotorRequirePower(throttle - 1)] Y && <true> true) && 
-						(mu Y . [!cruiseStep(throttle - 1) && !deactivateCruise] Y && <true> true)) &&
+					(val(throttle > 0 && throttle <= MAX && speed - desiredSpeed > SPEED_THRESHOLD) =>
+						([cruiseStep(throttle, desiredSpeed)]  (mu Y . [!setMotorRequirePower(throttle - 1)] Y && <true> true)) && 
+						([cruiseStep(throttle, desiredSpeed)]  (mu Y . [!cruiseStep(throttle - 1, desiredSpeed) && !deactivateCruise] Y && <true> true))) &&
 
 %%%% iii %%		%true
-					(val(ABS(speed - desiredSpeed) <= SPEED_THRESHOLD) =>
-						(mu Y . [!setMotorRequirePower(throttle)] Y && <true> true) && 
-						(mu Y . [!cruiseStep(throttle) && !deactivateCruise] Y && <true> true))
+					(val(throttle >= 0 && throttle <= MAX && abs(speed - desiredSpeed) <= SPEED_THRESHOLD) =>
+
+						([cruiseStep(throttle, desiredSpeed)]  (mu Y . [!setMotorRequirePower(throttle)] Y && <true> true)) && 
+						([cruiseStep(throttle, desiredSpeed)]  (mu Y . [!cruiseStep(throttle, desiredSpeed) && !deactivateCruise] Y && <true> true)))
 				)
 
 		)
