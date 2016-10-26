@@ -8,16 +8,18 @@ true
                 (forall power' : Int . [setMotorRequirePower(power')] X(desiredSpeed, power')) &&
                 (
                     forall speed : Int . [getSpeed(speed)]
-                    (
+                    (   val(desiredSpeed > 0 && power >= 0 && power <= MAX)
+                        => (
 %%%% a %%%%     %true
-                        (val(desiredSpeed > 0 && power >= 0 && power <= MAX && desiredSpeed - speed > SPEED_THRESHOLD)
-                            => (mu Y . ([!setMotorRequirePower(min(power + 1, MAX)) && !deactivateCruise] Y && <true> true))) &&
+                                (val(desiredSpeed - speed > SPEED_THRESHOLD)
+                                    => (mu Y . ([!setMotorRequirePower(min(power + 1, MAX)) && !deactivateCruise] Y && <true> true))) &&
 %%%% b %%%%     %true
-                        (val(desiredSpeed > 0 && power >= 0 && power <= MAX && speed - desiredSpeed > SPEED_THRESHOLD)
-                            => (mu Y . ([!setMotorRequirePower(max(power - 1, 0)) && !deactivateCruise] Y && <true> true))) && 
+                                (val(speed - desiredSpeed > SPEED_THRESHOLD)
+                                    => (mu Y . ([!setMotorRequirePower(max(power - 1, 0)) && !deactivateCruise] Y && <true> true))) && 
 %%%% c %%%%     %true
-                        (val(desiredSpeed > 0 && power >= 0 && power <= MAX && abs(speed - desiredSpeed) <= SPEED_THRESHOLD)
-                            => (mu Y . ([!setMotorRequirePower(power) && !deactivateCruise] Y && <true> true)))
+                                (val(abs(speed - desiredSpeed) <= SPEED_THRESHOLD)
+                                    => (mu Y . ([!setMotorRequirePower(power) && !deactivateCruise] Y && <true> true)))
+                            )
                     )
                 )
         )
