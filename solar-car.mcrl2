@@ -180,14 +180,18 @@ proc DataStreamController =
     receiveStreamDataStart
     . sum speed : Int . (speed >= 0 && speed <= MAX)
     ->  getSpeed(speed) . sendSpeed(speed)
-        . sum batteryLevel : BatteryLevelStatus
-            . getBatteryLevel(batteryLevel) . sendBatteryLevel(batteryLevel) 
-                . sum batteryTemp : BatteryTempStatus
-                    . getBatteryTemp(batteryTemp) . sendBatteryTemp(batteryTemp)
-                        . sum solarPower : Int . (solarPower >= 0 && solarPower <= MAX)
-                        ->  getSolarPower(solarPower) . sendSolarPower(solarPower)
-                            . sendStreamDataEnd(speed, batteryLevel, batteryTemp, solarPower)
-                            . DataStreamController;
+
+    . sum batteryLevel : BatteryLevelStatus
+    .   getBatteryLevel(batteryLevel) . sendBatteryLevel(batteryLevel) 
+    
+    . sum batteryTemp : BatteryTempStatus
+    .   getBatteryTemp(batteryTemp) . sendBatteryTemp(batteryTemp)
+    
+    . sum solarPower : Int . (solarPower >= 0 && solarPower <= MAX)
+    ->  getSolarPower(solarPower) . sendSolarPower(solarPower)
+    
+    . sendStreamDataEnd(speed, batteryLevel, batteryTemp, solarPower)
+    . DataStreamController;
 
 
 
