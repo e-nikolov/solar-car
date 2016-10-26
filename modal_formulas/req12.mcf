@@ -1,6 +1,4 @@
 true
-%%%% 11 %%%%    %true
-    && (forall n: BatteryLevelStatus. ([true*. getBatteryLevel(n)] mu X. ([!sendBatteryLevel(n)] X&& <true>true)))  
-    && (forall n: BatteryTempStatus. ([true*. getBatteryTemp(n)] mu X. ([!sendBatteryTemp(n)] X&& <true>true)))
-    && (forall n: Nat. val(n>=0&&n<=5)=> ([true*. getSolarPower(n)] mu X. ([!sendSolarPower(n)] X&& <true>true)))
-    && (forall n: Nat. val(n>=0&&n<=5)=> ([true*. getSpeed(n)] mu X. ([!sendSpeed(n)] X&& <true>true)))
+
+%%%% 12 %%%%    %true
+&& (forall desiredSpeed : Int . val(desiredSpeed >= 1 && desiredSpeed <= MAX) => [true* . activateCruise(desiredSpeed) . !deactivateCruise*] <true* . deactivateCruise> true)

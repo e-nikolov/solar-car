@@ -1,0 +1,7 @@
+true
+%%%% 13 %%%%    %true
+%%%% a  %%%%    %true
+&&  ([forall desiredSpeed : Int . !activateCruise(desiredSpeed)* . deactivateCruise] false)
+
+%%%% b  %%%%    %true
+&& ([deactivateCruise . forall desiredSpeed : Int . !activateCruise(desiredSpeed)* . deactivateCruise] false)
