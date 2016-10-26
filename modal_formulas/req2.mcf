@@ -1,9 +1,9 @@
-	true
-%%%% 2 %%%%		%true
-%%%% a %%%%		%true
-	&& ([true*.pressBrake] mu X . ([!conBatteryToMotor(0)] X && <true>true))		
-	&& ([true*.pressBrake] mu X . ([!conSolarPanelToMotor(0)] X && <true>true))	
+    true
+%%%% 2 %%%%     %true
+%%%% a %%%%     %true
+    && ([true*.pressBrake] mu X . ([!conBatteryToMotor(0)] X && <true>true))        
+    && ([true*.pressBrake] mu X . ([!conSolarPanelToMotor(0)] X && <true>true)) 
 
-%%%% b %%%%		%true
-	&& (forall m: Nat . val(m > 0 && m <= 5) => ([true* . pressBrake . (!releaseBrake)* . (conBatteryToMotor(m) || conSolarPanelToMotor(m))] false))	
-	
+%%%% b %%%%     %true
+    && (forall m: Nat . val(m > 0 && m <= 5) => ([true* . pressBrake . (!releaseBrake)* . (conBatteryToMotor(m) || conSolarPanelToMotor(m))] false))    
+    

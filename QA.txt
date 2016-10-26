@@ -3,9 +3,7 @@ Is it necessary to express that for all other actions in req3 and req7, the stat
 
 req 9 
 
-An activateCruise(s) cannot happen without a preceding getSpeed(s)
-
-getSpeed(0) cannot be followed by activateCruise(x), without a getSpeed(n) in between
+Last getSpeed(s) must have been with s > 0 when activateCruise(s) happens.
 
 pressThrottle(n) cannot be followed by activateCruise without a releaseThrottle in between.
 
@@ -16,4 +14,10 @@ cruiseStep(ds, p) must be followed by cruiseStep(ds, p/p-1/p+1) or deactivateCru
 
 activateCruise(ds) must be followed by either cruiseStep(0, ds) or deactivateCruise
 
+
+\\\\\\\\\\\
+
+CC can only be enabled if:
+    for the last getSpeed(s), s > 0
+    preceded by activateCruise
 

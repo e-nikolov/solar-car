@@ -1,4 +1,4 @@
 true
-%%%% 8 %%%%		%false
+%%%% 8 %%%%     %false
 && forall t : Int . val(t >= 1 && t <= MAX) => ([true* . pressThrottle(t)] mu X . ([(!setMotorRequirePower(t))] X && <true> true))
 

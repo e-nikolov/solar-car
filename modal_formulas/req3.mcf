@@ -4,7 +4,7 @@
         nu X(level : BatteryLevelStatus = Medium, temp : BatteryTempStatus = Normal, speed : Int = 0) .
             ([forall level' : BatteryLevelStatus, temp' : BatteryTempStatus, speed' : Int . !getBatteryLevel(level') && !getBatteryTemp(temp') && !getSpeed(speed')]  X(level, temp, speed)) && 
             (forall level' : BatteryLevelStatus . [getBatteryLevel(level')]     X(level', temp, speed)) &&
-            (forall temp' : BatteryTempStatus  	. [getBatteryTemp(temp')]       X(level, temp', speed)) &&
+            (forall temp' : BatteryTempStatus   . [getBatteryTemp(temp')]       X(level, temp', speed)) &&
             (forall speed' : Int                . [getSpeed(speed')]            X(level, temp, speed')) &&
             [pressBrake] (val(level != Full && temp != Overheating) => (mu Y . ([!conMotorToBattery(speed)] Y && <true>true)))
     )

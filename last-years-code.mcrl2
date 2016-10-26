@@ -38,16 +38,16 @@ eqn AllColors = [Red, Green, Yellow];
 % Map that denotes the conversion from a Lane to a Natural number.
 map Lane2Nat : Lane -> Nat;
 eqn Lane2Nat(A) = 0;
-		Lane2Nat(B) = 1;
- 		Lane2Nat(C) = 2;
- 		Lane2Nat(D) = 3;
+        Lane2Nat(B) = 1;
+        Lane2Nat(C) = 2;
+        Lane2Nat(D) = 3;
 
 % Map that denotes the conversion from a Natural number to a Lane.
 map Nat2Lane : Nat -> Lane;
 eqn Nat2Lane(0) = A;
- 		Nat2Lane(1) = B;
- 		Nat2Lane(2) = C;
- 		Nat2Lane(3) = D;
+        Nat2Lane(1) = B;
+        Nat2Lane(2) = C;
+        Nat2Lane(3) = D;
 
 
 % Two Lanes are parallel when they belong to the same road.
@@ -70,31 +70,31 @@ eqn getPrevLane(lane) = Nat2Lane((Lane2Nat(lane) - 1) mod 4);
 % getPerpendicularLanes maps a list of lanes to a list of their perpendicular lanes.
 map getPerpendicularLanes : List(Lane) -> List(Lane);
 eqn getPerpendicularLanes([]) = [];
- 		getPerpendicularLanes([A, C]) = [B, D];
- 		getPerpendicularLanes([C, A]) = [B, D];
- 		getPerpendicularLanes([B, D]) = [A, C];
- 		getPerpendicularLanes([D, B]) = [A, C];
+        getPerpendicularLanes([A, C]) = [B, D];
+        getPerpendicularLanes([C, A]) = [B, D];
+        getPerpendicularLanes([B, D]) = [A, C];
+        getPerpendicularLanes([D, B]) = [A, C];
 
- 		getPerpendicularLanes([A]) = [B, D];
- 		getPerpendicularLanes([B]) = [A, C];
- 		getPerpendicularLanes([C]) = [B, D];
- 		getPerpendicularLanes([D]) = [A, C];
+        getPerpendicularLanes([A]) = [B, D];
+        getPerpendicularLanes([B]) = [A, C];
+        getPerpendicularLanes([C]) = [B, D];
+        getPerpendicularLanes([D]) = [A, C];
 
 % getLanePair maps a lane to a list of lanes that contains both itself and its parallel lane.
 map getLanePair : Lane -> List(Lane);
 eqn getLanePair(A) = [A, C];
-		getLanePair(B) = [B, D];
- 		getLanePair(C) = [A, C];
- 		getLanePair(D) = [B, D];
+        getLanePair(B) = [B, D];
+        getLanePair(C) = [A, C];
+        getLanePair(D) = [B, D];
 
 % Remove a Lane from a list of Lanes.
 map removeLane : Lane # List(Lane) -> List(Lane);
-var laneX : Lane,	laneY : Lane,	lanes : List(Lane);
+var laneX : Lane,   laneY : Lane,   lanes : List(Lane);
 eqn removeLane(laneX, []) = [];
-		laneX == laneY ->
-  		removeLane(laneX, laneY |> lanes) = removeLane(laneX, lanes);
-  	laneX != laneY ->
-			removeLane(laneX, laneY |> lanes) = laneY |> removeLane(laneX, lanes);
+        laneX == laneY ->
+        removeLane(laneX, laneY |> lanes) = removeLane(laneX, lanes);
+    laneX != laneY ->
+            removeLane(laneX, laneY |> lanes) = laneY |> removeLane(laneX, lanes);
 
 % Get all Lanes which are different than a specified Lane.
 map getOtherLanes : Lane -> List(Lane);
@@ -135,103 +135,103 @@ act receiveActiveLanes, sendActiveLanes, indicateActiveLanes : List(Lane);
 % ----------------- User ----------------------- %
 % Modelling the actions of an external user.
 proc User =
-	(
-		sum lane : Lane
-		. (
-			sendEmergencyStart(lane) . sendEmergencyEnd + sum userType : UserType . sendSensor(userType, lane)
-		)
-	).User;
+    (
+        sum lane : Lane
+        . (
+            sendEmergencyStart(lane) . sendEmergencyEnd + sum userType : UserType . sendSensor(userType, lane)
+        )
+    ).User;
 
 % ---------------- Normal Mode ---------- %
 % Modelling the behavior of the Normal Mode of the operation of the system.
 proc NormalMode(currentUserTypes : List(UserType), currentLanes : List(Lane)) =
-		sum lane : Lane
-		. (
-		% Emergency can start in any Lane:
-			receiveEmergencyStartNM(lane) . sendActiveLanes(currentLanes) . receiveEmergencyEndNM
+        sum lane : Lane
+        . (
+        % Emergency can start in any Lane:
+            receiveEmergencyStartNM(lane) . sendActiveLanes(currentLanes) . receiveEmergencyEndNM
 
-			% After emergency ends for a certain Lane, the normal operation continues by setting its parallel Lane to Green too.
-			% This ensures that we will only activate the opposite Lanes if there is someone waiting there.
-			. SetLanes([Car], getLanePair(lane), Green) . NormalMode([Car], getLanePair(lane))
+            % After emergency ends for a certain Lane, the normal operation continues by setting its parallel Lane to Green too.
+            % This ensures that we will only activate the opposite Lanes if there is someone waiting there.
+            . SetLanes([Car], getLanePair(lane), Green) . NormalMode([Car], getLanePair(lane))
 
-			% If there is no emergency:
-			+ sum userType : UserType
+            % If there is no emergency:
+            + sum userType : UserType
 
-	  	% If a Sensor reading is received from a Lane which is not currently Active:
-				. (lane in getPerpendicularLanes(currentLanes))
-					-> receiveSensor(userType, lane)
-						. SetLanes([Car], currentLanes, Yellow) . SetLanes(AllUserTypes, AllLanes, Red)
+        % If a Sensor reading is received from a Lane which is not currently Active:
+                . (lane in getPerpendicularLanes(currentLanes))
+                    -> receiveSensor(userType, lane)
+                        . SetLanes([Car], currentLanes, Yellow) . SetLanes(AllUserTypes, AllLanes, Red)
 
-						% If the Sensor reading comes from a UserType Car, only switch the ActiveLane and turn to Green only the traffic lights for Cars.
-						. (userType == Car)
-							-> SetLanes([Car], getPerpendicularLanes(currentLanes), Green) . NormalMode([Car], getPerpendicularLanes(currentLanes))
+                        % If the Sensor reading comes from a UserType Car, only switch the ActiveLane and turn to Green only the traffic lights for Cars.
+                        . (userType == Car)
+                            -> SetLanes([Car], getPerpendicularLanes(currentLanes), Green) . NormalMode([Car], getPerpendicularLanes(currentLanes))
 
-						% If the Sensor reading comes from a UserType which is not a Car, switch the ActiveLane and turn to Green only the traffic lights for Cars
-						% and the UserType that the Sensor reading came from.
-							<> SetLanes([Car, userType], getPerpendicularLanes(currentLanes), Green) . NormalMode([Car, userType], getPerpendicularLanes(currentLanes))
+                        % If the Sensor reading comes from a UserType which is not a Car, switch the ActiveLane and turn to Green only the traffic lights for Cars
+                        % and the UserType that the Sensor reading came from.
+                            <> SetLanes([Car, userType], getPerpendicularLanes(currentLanes), Green) . NormalMode([Car, userType], getPerpendicularLanes(currentLanes))
 
-			% If a sensor reading is received from the currently Active Lane for a UserType which is not currently active.
-			% This can happen because by default the traffic lights for Pedestrians and Bikes do not turn Green in the Active Lane unless there is
-			% such a user who is currently waiting.
-					<> !(userType in currentUserTypes) -> receiveSensor(userType, lane)
-						. SetLanes([userType], currentLanes, Green) . NormalMode(userType |> currentUserTypes, currentLanes)
-		);
+            % If a sensor reading is received from the currently Active Lane for a UserType which is not currently active.
+            % This can happen because by default the traffic lights for Pedestrians and Bikes do not turn Green in the Active Lane unless there is
+            % such a user who is currently waiting.
+                    <> !(userType in currentUserTypes) -> receiveSensor(userType, lane)
+                        . SetLanes([userType], currentLanes, Green) . NormalMode(userType |> currentUserTypes, currentLanes)
+        );
 
 
 % ---------------- Emergency Mode ------------- %
 proc EmergencyMode =
 % Emergency can begin in any Lane.
-	sum lane : Lane . receiveEmergencyStartEM(lane)
+    sum lane : Lane . receiveEmergencyStartEM(lane)
 
-	% Receive the currently active lanes from NormalMode.
-	. sum lanes : List(Lane) . receiveActiveLanes(lanes)
+    % Receive the currently active lanes from NormalMode.
+    . sum lanes : List(Lane) . receiveActiveLanes(lanes)
 
-	. (
-		% If the emergency is started in one of the two currently Active Lanes, set its parallel Lane from Green to Yellow.
-		% This is done, because the emergency Lane is already Green, and should remain unchanged, but its parallel should turn Yellow and then Red.
-		(lane in lanes) -> SetLanes([Car], removeLane(lane, lanes), Yellow)
+    . (
+        % If the emergency is started in one of the two currently Active Lanes, set its parallel Lane from Green to Yellow.
+        % This is done, because the emergency Lane is already Green, and should remain unchanged, but its parallel should turn Yellow and then Red.
+        (lane in lanes) -> SetLanes([Car], removeLane(lane, lanes), Yellow)
 
-		% Otherwise set all currently Active Lanes to Yellow.
-		<> SetLanes([Car], lanes, Yellow)
-	)
+        % Otherwise set all currently Active Lanes to Yellow.
+        <> SetLanes([Car], lanes, Yellow)
+    )
 
-	% Set the emergency lane to Green and all others to Red.
-	. SetLanes(AllUserTypes, getOtherLanes(lane), Red) . SetLanes([Bike, Pedestrian], [lane], Red) . SetLanes([Car], [lane], Green)
-	. receiveEmergencyEndEM . EmergencyMode;
+    % Set the emergency lane to Green and all others to Red.
+    . SetLanes(AllUserTypes, getOtherLanes(lane), Red) . SetLanes([Bike, Pedestrian], [lane], Red) . SetLanes([Car], [lane], Green)
+    . receiveEmergencyEndEM . EmergencyMode;
 
 
 % ---------------- Auxiliary Processes -------------- %
 % Used to set the initial state of the NormalMode process.
 proc NormalModeInit(lanes : List(Lane)) =
-	SetLanes(AllUserTypes, AllLanes, Red) . SetLanes([Car], lanes, Green) . NormalMode([Car], lanes);
+    SetLanes(AllUserTypes, AllLanes, Red) . SetLanes([Car], lanes, Green) . NormalMode([Car], lanes);
 
 % Used to recursively go through the traffic lights for a specified UserType in a specified list of Lanes and set their states to a specified Color.
 proc _SetLanes(userType : UserType, lanes : List(Lane), color : Color) =
-	(lanes != []) ->
-		(
-		% Only the traffic lights for Cars can turn Yellow.
-			((userType == Car || color != Yellow) -> setTrafficLight(userType, head(lanes), color) <> continue)
-			. _SetLanes(userType, tail(lanes), color)
-		) <> continue;
+    (lanes != []) ->
+        (
+        % Only the traffic lights for Cars can turn Yellow.
+            ((userType == Car || color != Yellow) -> setTrafficLight(userType, head(lanes), color) <> continue)
+            . _SetLanes(userType, tail(lanes), color)
+        ) <> continue;
 
 % Used to recursively go through a list of UserTypes and a list of Lanes and set the state of their traffic lights to a specified Color.
 proc SetLanes(userTypes : List(UserType), lanes : List(Lane), color : Color) =
-	% (Sort(userTypes) != userTypes) -> SetLanes(Sort(userTypes))
-	(userTypes != []) -> (_SetLanes(head(userTypes), lanes, color) . SetLanes(tail(userTypes), lanes, color)) <> waitTimeout(color);
+    % (Sort(userTypes) != userTypes) -> SetLanes(Sort(userTypes))
+    (userTypes != []) -> (_SetLanes(head(userTypes), lanes, color) . SetLanes(tail(userTypes), lanes, color)) <> waitTimeout(color);
 
 
 %------------------------- Initialization -------------------------------------%
 
 init hide({continue, indicateActiveLanes},
-		allow({getSensor, setTrafficLight, waitTimeout, emergencyStart, emergencyEnd, indicateActiveLanes, continue},
-	  		comm({
-	  				sendActiveLanes | receiveActiveLanes -> indicateActiveLanes,
-					sendEmergencyStart | receiveEmergencyStartNM | receiveEmergencyStartEM -> emergencyStart,
-					sendEmergencyEnd   | receiveEmergencyEndNM   | receiveEmergencyEndEM   -> emergencyEnd,
-	  				sendSensor | receiveSensor -> getSensor
-					},
-% 		Start the NormalMode by activating lanes A and C.
-			User || NormalModeInit([A, C]) || EmergencyMode
-			)
-		)
-	);
+        allow({getSensor, setTrafficLight, waitTimeout, emergencyStart, emergencyEnd, indicateActiveLanes, continue},
+            comm({
+                    sendActiveLanes | receiveActiveLanes -> indicateActiveLanes,
+                    sendEmergencyStart | receiveEmergencyStartNM | receiveEmergencyStartEM -> emergencyStart,
+                    sendEmergencyEnd   | receiveEmergencyEndNM   | receiveEmergencyEndEM   -> emergencyEnd,
+                    sendSensor | receiveSensor -> getSensor
+                    },
+%       Start the NormalMode by activating lanes A and C.
+            User || NormalModeInit([A, C]) || EmergencyMode
+            )
+        )
+    );
