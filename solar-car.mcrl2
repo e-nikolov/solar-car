@@ -70,7 +70,6 @@ act switchOn, switchOff;
     test : Bool;
     testN : Int;
     newCycle : Bool # Bool # Int # Int;
-    cruiseStep : Int # Int;
 
 
 %------------------------- Process declarations -------------------------------------%
@@ -106,7 +105,7 @@ proc MainController(on : Bool, cruise : Bool, throttle : Int, desiredSpeed : Int
             .
             (
                 (cruise == true)
-                ->  cruiseStep(throttle, desiredSpeed) . sendCruiseStepStart(throttle, desiredSpeed, speed, batteryLevel, batteryTemp, solarPower)
+                ->  sendCruiseStepStart(throttle, desiredSpeed, speed, batteryLevel, batteryTemp, solarPower)
                     . sum newThrottle : Int . receiveCruiseStepEnd(newThrottle)
                     . MainController(true, true, newThrottle, desiredSpeed)
 
@@ -212,7 +211,7 @@ proc PressBrake(speed : Int, batteryLevel : BatteryLevelStatus, batteryTemp : Ba
 init hide({continue},
   allow(
     {
-        newCycle, cruiseStep,
+        newCycle,
         switchOn, switchOff, pressThrottle, pressBrake, releaseBrake, activateCruise, deactivateCruise,
         getBatteryLevel, getBatteryTemp, conBatteryToMotor, getSpeed, conMotorToBattery, setMotorRequirePower, getSolarPower,
         conSolarPanelToMotor, conSolarPanelToBattery, activateBrakes, deactivateBrakes,
