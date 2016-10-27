@@ -1,21 +1,21 @@
 true
-%%%% 6 %%%%     %true
-%%%% a %%%%     %true
+
+%%%% 6a %%%     %true
 %%%% i %%%%     %true
-    && ([true* . getBatteryLevel(Empty)] mu X . ([!(conBatteryToMotor(0))] X && <true> true))    %true
+    && ([true* . getBatteryLevel(Empty)] mu X . ([!(conBatteryToMotor(0))] X && <true> true))
 
 %%% ii %%%%     %true
-    && ([true* . getBatteryLevel(Empty) . !(getBatteryLevel(Medium) || getBatteryLevel(Full))*] 
-        (forall m : Nat . val(m > 0) => [conBatteryToMotor(m)] false)) %true
+    && ([true* . getBatteryLevel(Empty)
+    	. !(getBatteryLevel(Medium) || getBatteryLevel(Full))*] 
+        (forall m : Nat . val(m > 0) => [conBatteryToMotor(m)] false))
 
-%%%% b %%%%     %true
+%%%% 6b %%%     %true
 %%%% i %%%%     %true
-    && ([true* . getSolarPower(0)] mu X . ([!conSolarPanelToMotor(0)] X && <true> true)) %true
-    && ([true* . getSolarPower(0)] mu X . ([!conSolarPanelToBattery(0)] X && <true> true))   %true
+    && ([true* . getSolarPower(0)] mu X . ([!conSolarPanelToMotor(0)] X && <true> true))
+    && ([true* . getSolarPower(0)] mu X . ([!conSolarPanelToBattery(0)] X && <true> true))
 
 %%% ii %%%%     %true
     &&  ([true* . getSolarPower(0)] [(forall n : Nat . val(n > 0) => !getSolarPower(n))*]
-        (forall m: Int . val(m > 0) => [conSolarPanelToMotor(m)] false))    %true
-
+        (forall m: Int . val(m > 0) => [conSolarPanelToMotor(m)] false))
     &&  ([true* . getSolarPower(0)] [(forall n : Nat . val(n > 0) => !getSolarPower(n))*]
-        (forall m: Int . val(m > 0) => [conSolarPanelToBattery(m)] false))  %true
+        (forall m: Int . val(m > 0) => [conSolarPanelToBattery(m)] false))

@@ -1,4 +1,5 @@
-    true
+true
+
 %%%% 1 %%%%     %true
 %%%% a %%%%     %true
     && ([true* . switchOff] mu X. ([!conMotorToBattery(0)] X && <true> true))

@@ -1,4 +1,6 @@
 true
+
 %%%% 11 %%%%    %true
     && ([true*] [forall n : Int . activateCruise(n)] [!(deactivateCruise)*] 
-    	[(forall m : Int . pressThrottle(m)) || pressBrake || switchOff || releaseThrottle] mu X . ([!deactivateCruise] X && <true> true))
+        [(forall m : Int . pressThrottle(m)) || pressBrake || switchOff || releaseThrottle]
+        mu X . ([!deactivateCruise] X && <true> true))

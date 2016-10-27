@@ -1,14 +1,12 @@
 true
+
 %%%% 9 %%%% %true
     && nu X(speed : Int = 0, throttle : Int = 0) . 
-        ([forall speed' : Int, throttle' : Int . (!getSpeed(speed') && !pressThrottle(throttle') && !releaseThrottle && !switchOn)] X(speed, throttle)) &&
+        ([forall speed' : Int, throttle' : Int . 
+            (!getSpeed(speed') && !pressThrottle(throttle') && !releaseThrottle && !switchOn)]
+            X(speed, throttle)) &&
         (forall speed' : Int . [getSpeed(speed')] X(speed', throttle)) &&
         (forall throttle' : Int . [pressThrottle(throttle')] X(speed, throttle')) &&
         ([releaseThrottle || switchOn] X(speed, 0)) &&
-        (forall speed' : Int . [activateCruise(speed')] val(speed > 0 && speed == speed' && throttle == 0))
-
-
-
-
-
-
+        (forall speed' : Int . [activateCruise(speed')] 
+            val(speed > 0 && speed == speed' && throttle == 0))

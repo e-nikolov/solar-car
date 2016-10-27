@@ -1,4 +1,6 @@
 true
-%%%% 8 %%%%     %false
-&& ([true*] forall t : Int . val(t > 0) => [pressThrottle(t)] mu X . ([(!setMotorRequirePower(t))] X && <true> true))
+
+%%%% 8 %%%%     %true
+&&  ([true*] forall t : Int . val(t > 0) => [pressThrottle(t)]
+    mu X . ([(!setMotorRequirePower(t))] X && <true> true))
 
