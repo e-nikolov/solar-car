@@ -7,5 +7,8 @@ true
     && ([true*. (getBatteryLevel(Full))]        mu X . ([!(conMotorToBattery(0))]       X && <true>true)) % true
 
 %%%% b %%%%     %true
-    && (forall m: Nat. val(m > 0 && m <= MAX) => ([true* . getBatteryTemp(Overheating) . !(getBatteryTemp(Normal))* . (conSolarPanelToBattery(m) || conMotorToBattery(m))]false))  %true
-    && (forall m: Nat. val(m > 0 && m <= MAX) => ([true* . getBatteryLevel(Full) . !(getBatteryLevel(Empty) || getBatteryLevel(Medium))* . (conSolarPanelToBattery(m) || conMotorToBattery(m))]false))  %true
+    && (([true* . getBatteryTemp(Overheating) . !(getBatteryTemp(Normal))*] 
+    	forall m: Nat. val(m > 0) => [(conSolarPanelToBattery(m) || conMotorToBattery(m))]false))  %true
+
+    && (([true* . getBatteryLevel(Full) . !(getBatteryLevel(Empty) || getBatteryLevel(Medium))*]
+     	forall m: Nat. val(m > 0) => [(conSolarPanelToBattery(m) || conMotorToBattery(m))]false))  %true
