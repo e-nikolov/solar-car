@@ -1,23 +1,23 @@
-Is it necessary to express that for all other actions in req3 and req7, the state remains unchanged?
+Combine req 6
 
+true
 
-req 9 
+%%%% 6a %%%     %true
+%%%% i %%%%     %true
+    && ([true* . getBatteryLevel(Empty)] mu X . ([!(conBatteryToMotor(0))] X && <true> true))
 
-Last getSpeed(s) must have been with s > 0 when activateCruise(s) happens.
+%%% ii %%%%     %true
+    && ([true* . getBatteryLevel(Empty)
+        . !(getBatteryLevel(Medium) || getBatteryLevel(Full))*] 
+        (forall m : Nat . val(m > 0) => [conBatteryToMotor(m)] false))
 
-pressThrottle(n) cannot be followed by activateCruise without a releaseThrottle in between.
+%%%% 6b %%%     %true
+%%%% i %%%%     %true
+    && ([true* . getSolarPower(0)] mu X . ([!conSolarPanelToMotor(0)] X && <true> true))
+    && ([true* . getSolarPower(0)] mu X . ([!conSolarPanelToBattery(0)] X && <true> true))
 
-cruise step can only happen between activatecruise and deactivate cruise
-
-cruiseStep(ds, p) must be followed by setMotorRequirePower(p/p-1/p+1)
-cruiseStep(ds, p) must be followed by cruiseStep(ds, p/p-1/p+1) or deactivateCruise
-
-activateCruise(ds) must be followed by either cruiseStep(0, ds) or deactivateCruise
-
-
-\\\\\\\\\\\
-
-CC can only be enabled if:
-    for the last getSpeed(s), s > 0
-    preceded by activateCruise
-
+%%% ii %%%%     %true
+    &&  ([true* . getSolarPower(0)] [(forall n : Nat . val(n > 0) => !getSolarPower(n))*]
+        (forall m: Int . val(m > 0) => [conSolarPanelToMotor(m)] false))
+    &&  ([true* . getSolarPower(0)] [(forall n : Nat . val(n > 0) => !getSolarPower(n))*]
+        (forall m: Int . val(m > 0) => [conSolarPanelToBattery(m)] false))
