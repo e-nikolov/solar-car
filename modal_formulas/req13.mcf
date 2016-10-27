@@ -6,4 +6,4 @@ true
 
 %%%% b  %%%%    %true
 && ([deactivateCruise . forall desiredSpeed : Int . !activateCruise(desiredSpeed)*
-	. deactivateCruise] false)
+    . deactivateCruise] false)

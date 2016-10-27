@@ -3,16 +3,16 @@ true
 %%%% 14 %%%%    %true
 %%%% a  %%%%    %true
     && ([true*] forall n : BatteryLevel . [getBatteryLevel(n)] 
-    	mu X . ([!sendBatteryLevel(n)] X && <true> true))
+        mu X . ([!sendBatteryLevel(n)] X && <true> true))
 
 %%%% b  %%%%    %true
     && ([true*] forall n : BatteryTemp . [getBatteryTemp(n)]
-    	mu X . ([!sendBatteryTemp(n)] X && <true> true))
+        mu X . ([!sendBatteryTemp(n)] X && <true> true))
 
 %%%% c  %%%%    %true
     && ([true*] forall n : Nat . [getSolarPower(n)]
-    	mu X . ([!sendSolarPower(n)] X && <true> true))
+        mu X . ([!sendSolarPower(n)] X && <true> true))
 
 %%%% d  %%%%    %true
     && ([true*] forall n : Nat . [getSpeed(n)]
-    	mu X . ([!sendSpeed(n)] X && <true> true))
+        mu X . ([!sendSpeed(n)] X && <true> true))

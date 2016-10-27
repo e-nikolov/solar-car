@@ -8,8 +8,8 @@ true
     && ([true* . switchOff] mu X. ([!conSolarPanelToBattery(0)] X && <true> true)) 
 %%%% b %%%%     %true
     && ([true* . switchOff . (!switchOn)*] 
-    	forall  m: Int . val(m > 0)
-    		=> [(conMotorToBattery(m) ||
-    			conBatteryToMotor(m) ||
-    			conSolarPanelToMotor(m) ||
-    			conSolarPanelToBattery(m))] false)
+        forall  m: Int . val(m > 0)
+            => [(conMotorToBattery(m) ||
+                conBatteryToMotor(m) ||
+                conSolarPanelToMotor(m) ||
+                conSolarPanelToBattery(m))] false)

@@ -3,16 +3,16 @@ true
 %%%% 5 %%%%     %true
 %%%% a %%%%     %true
     && ([!(conBatteryToMotor(0))*] forall m : Nat . val(m > 0)
-    	=> [conSolarPanelToBattery(m) || conMotorToBattery(m)] false)
+        => [conSolarPanelToBattery(m) || conMotorToBattery(m)] false)
 
 %%%% b %%%%     %true
     && ([!(conSolarPanelToBattery(0) || conMotorToBattery(0))*] forall m : Nat . val(m > 0)
-    	=> [conBatteryToMotor(m)] false)
+        => [conBatteryToMotor(m)] false)
 
 %%%% c %%%%     %true
     && ([!(conMotorToBattery(0))*] forall m : Nat . val(m > 0)
-    	=> [conSolarPanelToMotor(m) || conBatteryToMotor(m)] false)
+        => [conSolarPanelToMotor(m) || conBatteryToMotor(m)] false)
 
 %%%% d %%%%     %true
     && ([!(conSolarPanelToMotor(0) || conBatteryToMotor(0))*] forall m : Nat . val(m > 0)
-    	=> [conMotorToBattery(m)] false)
+        => [conMotorToBattery(m)] false)

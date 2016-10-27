@@ -6,7 +6,7 @@ true
 
 %%% ii %%%%     %true
     && ([true* . getBatteryLevel(Empty)
-    	. !(getBatteryLevel(Medium) || getBatteryLevel(Full))*] 
+        . !(getBatteryLevel(Medium) || getBatteryLevel(Full))*] 
         (forall m : Nat . val(m > 0) => [conBatteryToMotor(m)] false))
 
 %%%% 6b %%%     %true

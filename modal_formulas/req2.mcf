@@ -7,5 +7,6 @@ true
 
 %%%% b %%%%     %true
     && ([true* . pressBrake . (!releaseBrake)*] 
-    	forall m : Nat . val(m > 0) => [(conBatteryToMotor(m) || conSolarPanelToMotor(m))] false)
+        forall m : Nat . val(m > 0)
+            => [(conBatteryToMotor(m) || conSolarPanelToMotor(m))] false)
     
