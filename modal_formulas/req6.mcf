@@ -11,8 +11,10 @@ true
 
 %%%% 6b %%%     %true
 %%%% i %%%%     %true
-    && ([true* . getSolarPower(0)] mu X . ([!conSolarPanelToMotor(0)] X && <true> true))
-    && ([true* . getSolarPower(0)] mu X . ([!conSolarPanelToBattery(0)] X && <true> true))
+    &&  ([true* . getSolarPower(0)] 
+            ((mu X . ([!conSolarPanelToMotor(0)] X && <true> true)) &&
+            (mu X . ([!conSolarPanelToBattery(0)] X && <true> true)))
+        )
 
 %%% ii %%%%     %true
     &&  ([true* . getSolarPower(0)] 
