@@ -1,7 +1,7 @@
 %------------------------- Sort declarations -------------------------------------%
 
-sort BatteryLevelStatus = struct Empty  | Medium | Full;
-sort BatteryTempStatus  = struct Normal | Overheating;
+sort BatteryLevel = struct Empty  | Medium | Full;
+sort BatteryTemp  = struct Normal | Overheating;
 
 %------------------------- Map declarations -------------------------------------%
 
@@ -26,8 +26,8 @@ act switchOn, switchOff;
 
 % Battery actions
 
-    getBatteryLevel : BatteryLevelStatus;
-    getBatteryTemp : BatteryTempStatus;
+    getBatteryLevel : BatteryLevel;
+    getBatteryTemp : BatteryTemp;
     conBatteryToMotor : Int;
 
 % Motor actions
@@ -47,20 +47,20 @@ act switchOn, switchOff;
 
 % Monitoring system
 
-    sendBatteryLevel : BatteryLevelStatus;
-    sendBatteryTemp : BatteryTempStatus;
+    sendBatteryLevel : BatteryLevel;
+    sendBatteryTemp : BatteryTemp;
     sendSolarPower : Int;
     sendSpeed : Int;
 
 % Internal actions
 
     sendStreamDataStart, receiveStreamDataStart, startStreamData;
-    sendStreamDataEnd, receiveStreamDataEnd, endStreamData : Int # BatteryLevelStatus # BatteryTempStatus # Int;
+    sendStreamDataEnd, receiveStreamDataEnd, endStreamData : Int # BatteryLevel # BatteryTemp # Int;
 
-    sendCruiseStepStart, receiveCruiseStepStart, startCruiseStep : Int # Int # Int # BatteryLevelStatus # BatteryTempStatus # Int;
+    sendCruiseStepStart, receiveCruiseStepStart, startCruiseStep : Int # Int # Int # BatteryLevel # BatteryTemp # Int;
     sendCruiseStepEnd, receiveCruiseStepEnd, endCruiseStep : Int;
 
-    sendManagePowerStart, receiveManagePowerStart, startManagePower : Int # Int # BatteryLevelStatus # BatteryTempStatus # Int;
+    sendManagePowerStart, receiveManagePowerStart, startManagePower : Int # Int # BatteryLevel # BatteryTemp # Int;
     sendManagePowerEnd, receiveManagePowerEnd, endManagePower;
 
     continue;
@@ -78,7 +78,7 @@ proc MainController(on : Bool, cruise : Bool, throttle : Int, desiredSpeed : Int
     ->  (
             newCycle(on, cruise, throttle, desiredSpeed)
             . sendStreamDataStart 
-            . sum speed : Int, batteryLevel : BatteryLevelStatus, batteryTemp : BatteryTempStatus, solarPower : Int
+            . sum speed : Int, batteryLevel : BatteryLevel, batteryTemp : BatteryTemp, solarPower : Int
             . receiveStreamDataEnd(speed, batteryLevel, batteryTemp, solarPower)
             . 
             (
@@ -130,7 +130,7 @@ proc MainController(on : Bool, cruise : Bool, throttle : Int, desiredSpeed : Int
 
 
 proc PowerController =
-    sum throttle : Int, speed : Int, batteryLevel : BatteryLevelStatus, batteryTemp : BatteryTempStatus, solarPower : Int 
+    sum throttle : Int, speed : Int, batteryLevel : BatteryLevel, batteryTemp : BatteryTemp, solarPower : Int 
     . receiveManagePowerStart(throttle, speed, batteryLevel, batteryTemp, solarPower)
     . setMotorRequirePower(throttle)
     .   
@@ -160,7 +160,7 @@ proc PowerController =
 
 
 proc CruiseStepController =
-    sum throttle : Int, desiredSpeed : Int, currentSpeed : Int, batteryLevel : BatteryLevelStatus, batteryTemp : BatteryTempStatus, solarPower : Int
+    sum throttle : Int, desiredSpeed : Int, currentSpeed : Int, batteryLevel : BatteryLevel, batteryTemp : BatteryTemp, solarPower : Int
     . receiveCruiseStepStart(throttle, desiredSpeed, currentSpeed, batteryLevel, batteryTemp, solarPower)
     . 
     (
@@ -181,10 +181,10 @@ proc DataStreamController =
     . sum speed : Int . (speed >= 0 && speed <= MAX)
     ->  getSpeed(speed) . sendSpeed(speed)
 
-    . sum batteryLevel : BatteryLevelStatus
+    . sum batteryLevel : BatteryLevel
     .   getBatteryLevel(batteryLevel) . sendBatteryLevel(batteryLevel) 
     
-    . sum batteryTemp : BatteryTempStatus
+    . sum batteryTemp : BatteryTemp
     .   getBatteryTemp(batteryTemp) . sendBatteryTemp(batteryTemp)
     
     . sum solarPower : Int . (solarPower >= 0 && solarPower <= MAX)
@@ -199,7 +199,7 @@ proc DataStreamController =
 
 proc PowerOff = switchOff . conMotorToBattery(0) . conSolarPanelToMotor(0) . conSolarPanelToBattery(0) . conBatteryToMotor(0);
 
-proc PressBrake(speed : Int, batteryLevel : BatteryLevelStatus, batteryTemp : BatteryTempStatus, solarPower : Int, braking : Bool) = 
+proc PressBrake(speed : Int, batteryLevel : BatteryLevel, batteryTemp : BatteryTemp, solarPower : Int, braking : Bool) = 
                 (!braking)
                 ->  pressBrake
                     . sendManagePowerStart(0, speed, batteryLevel, batteryTemp, solarPower) . receiveManagePowerEnd 

@@ -1,13 +1,13 @@
 true
 %%%% 7 %%%%     %true
 &&  (
-        nu X(level : BatteryLevelStatus = Medium, temp : BatteryTempStatus = Normal, solarPower : Int = 0, speed : Int = 0) .
+        nu X(level : BatteryLevel = Medium, temp : BatteryTemp = Normal, solarPower : Int = 0, speed : Int = 0) .
             ([
-                forall level' : BatteryLevelStatus, temp' : BatteryTempStatus, solarPower' : Int, speed' : Int
+                forall level' : BatteryLevel, temp' : BatteryTemp, solarPower' : Int, speed' : Int
                  . !getBatteryLevel(level') && !getBatteryTemp(temp') && !getSolarPower(solarPower') && !getSpeed(speed')]
                    X(level, temp, solarPower, speed)) && 
-            (forall level' : BatteryLevelStatus . [getBatteryLevel(level')]         X(level', temp, solarPower, speed)) &&
-            (forall temp' : BatteryTempStatus   . [getBatteryTemp(temp')]           X(level, temp', solarPower, speed)) &&
+            (forall level' : BatteryLevel . [getBatteryLevel(level')]         X(level', temp, solarPower, speed)) &&
+            (forall temp' : BatteryTemp   . [getBatteryTemp(temp')]           X(level, temp', solarPower, speed)) &&
             (forall solarPower' : Int           . [getSolarPower(solarPower')]      X(level, temp, solarPower', speed)) &&
             (forall speed' : Int                . [getSpeed(speed')]                X(level, temp, solarPower, speed')) &&
 
