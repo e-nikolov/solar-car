@@ -1,3 +1,4 @@
 true
 %%%% 11 %%%%    %true
-    && (forall n, m : Nat . val(n >= 0 && n <= MAX && m >= 0 && m <= MAX) => ([true* . activateCruise(n) . !(deactivateCruise)* . (pressThrottle(m) || pressBrake || switchOff || releaseThrottle)] mu X . ([!deactivateCruise] X && <true> true)))
+    && ([true*] [forall n : Int . activateCruise(n)] [!(deactivateCruise)*] 
+    	[(forall m : Int . pressThrottle(m)) || pressBrake || switchOff || releaseThrottle] mu X . ([!deactivateCruise] X && <true> true))

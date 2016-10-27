@@ -14,8 +14,8 @@ true
     && ([true* . getSolarPower(0)] mu X . ([!conSolarPanelToBattery(0)] X && <true> true))   %true
 
 %%% ii %%%%     %true
-    &&  ([true* . getSolarPower(0)] [forall n : Nat . val(n > 0) => !getSolarPower(n) *]
+    &&  ([true* . getSolarPower(0)] [forall n : Nat . val(n > 0) => !getSolarPower(n)*]
         (forall m: Int . val(m > 0) => [conSolarPanelToMotor(m)] false))    %true
 
-    &&  ([true* . getSolarPower(0)] [forall n : Nat . val(n > 0) => !getSolarPower(n) *]
+    &&  ([true* . getSolarPower(0)] [forall n : Nat . val(n > 0) => !getSolarPower(n)*]
         (forall m: Int . val(m > 0) => [conSolarPanelToBattery(m)] false))  %true
