@@ -1,0 +1,41 @@
+true
+
+%%%% 7 %%%%     %true
+&&  (
+        nu X(level : BatteryLevel = Medium, temp : BatteryTemp = Normal,
+             solarPower : Int = 0, speed : Int = 0) .
+            ([forall level' : BatteryLevel, temp' : BatteryTemp,
+                     solarPower' : Int, speed' : Int .
+                !getBatteryLevel(level') && !getBatteryTemp(temp') &&
+                !getSolarPower(solarPower') && !getSpeed(speed')]
+                X(level, temp, solarPower, speed)) && 
+            (forall level' : BatteryLevel . [getBatteryLevel(level')]
+                X(level', temp, solarPower, speed)) &&
+            (forall temp' : BatteryTemp   . [getBatteryTemp(temp')]
+                X(level, temp', solarPower, speed)) &&
+            (forall solarPower' : Int . [getSolarPower(solarPower')]
+                X(level, temp, solarPower', speed)) &&
+            (forall speed' : Int . [getSpeed(speed')]
+                X(level, temp, solarPower, speed')) &&
+
+%%%% a %%%%     %true            
+            (forall requiredPower : Int . [setMotorRequirePower(requiredPower)]
+                (val(requiredPower < solarPower)
+                => (((mu Y . ([!conSolarPanelToMotor(requiredPower)] Y && <true> true))) &&
+	                    (val(level != Full && temp != Overheating)
+	                	=> mu Y . ([!conSolarPanelToBattery(solarPower - requiredPower)] Y && 
+	                		<true> true)
+	                	)
+                	)
+                )
+            ) &&
+%%%% b %%%%     %true
+            (forall requiredPower : Int . [setMotorRequirePower(requiredPower)]
+                (val(requiredPower >= solarPower)
+                => mu Y . ([!conSolarPanelToMotor(solarPower)] Y && <true> true))) &&
+            (forall requiredPower : Int . [setMotorRequirePower(requiredPower)]
+                (val(requiredPower >= solarPower && level != Empty)
+                => mu Y . ([!conBatteryToMotor(requiredPower - solarPower)] Y &&
+                <true> true)))
+    )
+    

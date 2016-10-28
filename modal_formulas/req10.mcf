@@ -4,7 +4,8 @@ true
     &&  (
             nu X(desiredSpeed : Int = 0, power : Int = 0) .
                 ([forall desiredSpeed', power' : Int . 
-                    !setMotorRequirePower(power') && !activateCruise(desiredSpeed') &&
+                    !setMotorRequirePower(power') &&
+                    !activateCruise(desiredSpeed') &&
                     !deactivateCruise]
                     X(desiredSpeed, power)) &&
                 (forall desiredSpeed' : Int . 

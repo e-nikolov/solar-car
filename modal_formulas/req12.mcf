@@ -2,5 +2,5 @@ true
 
 %%%% 12 %%%%    %true
 && ([true*] 
-    [forall desiredSpeed : Int . val(desiredSpeed > 0) 
-    => activateCruise(desiredSpeed)] [!deactivateCruise*] <true* . deactivateCruise> true)
+    forall desiredSpeed : Int . val(desiredSpeed > 0) 
+    => [activateCruise(desiredSpeed) . !deactivateCruise*] <true* . deactivateCruise> true)

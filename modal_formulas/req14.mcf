@@ -10,9 +10,9 @@ true
         mu X . ([!sendBatteryTemp(n)] X && <true> true))
 
 %%%% c  %%%%    %true
-    && ([true*] forall n : Nat . [getSolarPower(n)]
+    && ([true*] forall n : Int . [getSolarPower(n)]
         mu X . ([!sendSolarPower(n)] X && <true> true))
 
 %%%% d  %%%%    %true
-    && ([true*] forall n : Nat . [getSpeed(n)]
+    && ([true*] forall n : Int . [getSpeed(n)]
         mu X . ([!sendSpeed(n)] X && <true> true))

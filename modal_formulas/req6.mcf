@@ -7,7 +7,7 @@ true
 %%% ii %%%%     %true
     && ([true* . getBatteryLevel(Empty)
         . !(getBatteryLevel(Medium) || getBatteryLevel(Full))*] 
-        (forall m : Nat . val(m > 0) => [conBatteryToMotor(m)] false))
+        (forall m : Int . val(m > 0) => [conBatteryToMotor(m)] false))
 
 %%%% 6b %%%     %true
 %%%% i %%%%     %true
@@ -19,5 +19,5 @@ true
 %%% ii %%%%     %true
     &&  ([true* . getSolarPower(0)] 
         [(forall n : Int . val(n > 0) => !getSolarPower(n))*]
-        (forall m: Int . val(m > 0) 
+        (forall m : Int . val(m > 0) 
         => [conSolarPanelToMotor(m) || conSolarPanelToBattery(m)] false))

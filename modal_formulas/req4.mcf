@@ -12,11 +12,11 @@ true
         mu X . ([!(conMotorToBattery(0))]       X && <true> true))
 
 %%%% b %%%%     %true
-    && ([true* . getBatteryTemp(Overheating) . !(getBatteryTemp(Normal))*] 
-        forall m : Nat . val(m > 0)
-        => [(conSolarPanelToBattery(m) || conMotorToBattery(m))] false)
+    && ([true* . getBatteryTemp(Overheating) . !(getBatteryTemp(Normal))*]
+        forall m : Int . val(m > 0) 
+        => [conSolarPanelToBattery(m) || conMotorToBattery(m)] false)
 
     && ([true* . getBatteryLevel(Full) . 
         !(getBatteryLevel(Empty) || getBatteryLevel(Medium))*]
-        forall m : Nat . val(m > 0) 
-        => [(conSolarPanelToBattery(m) || conMotorToBattery(m))] false)
+        forall m : Int . val(m > 0) 
+        => [conSolarPanelToBattery(m) || conMotorToBattery(m)] false)
